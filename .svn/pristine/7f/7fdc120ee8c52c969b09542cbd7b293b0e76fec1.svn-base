@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.party.dao.IPartyApplyDAO">
+
+    <resultMap id="BaseResultMap" type="com.dwms.party.model.bean.PartyApply">
+        <id column="applyId" property="applyId"/>
+        <result column="partyName" property="partyName"/>
+        <result column="memNum" property="memNum"/>
+        <result column="address" property="address"/>
+        <result column="contract" property="contract"/>
+        <result column="mobile" property="mobile"/>
+        <result column="email" property="email"/>
+        <result column="partyId" property="partyId"/>
+        <result column="status" property="status"/>
+        <result column="provCode" property="provCode"/>
+        <result column="cityCode" property="cityCode"/>
+        <result column="distCode" property="distCode"/>
+        <result column="createTime" property="createTime"/>
+    </resultMap>
+</mapper>

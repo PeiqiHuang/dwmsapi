@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.base.dao.IDistDAO">
+
+    <!--地区列表-->
+    <select id="selectSelective" resultType="com.dwms.base.model.bean.District">
+        select * from tb_sys_district
+        where 1=1
+        <if test="form.distDegree != null">
+            and distDegree = #{form.distDegree}
+        </if>
+        <if test="form.distType != null">
+            and distType = #{form.distType}
+        </if>
+    </select>
+
+    <!--地区列表：时间增量-->
+    <select id="selectIncrease" resultType="com.dwms.base.model.bean.District">
+        select distCode,distName,provCode,cityCode,distDegree,isTerminal,distType,distStatus,createTime,updateTime from
+        tb_sys_district
+        where 1=1
+        <if test="date!=null and date!=''">
+            and updateTime>date_add(str_to_date(#{date},'%Y%m%d'),interval 1 day)
+        </if>
+    </select>
+
+</mapper>

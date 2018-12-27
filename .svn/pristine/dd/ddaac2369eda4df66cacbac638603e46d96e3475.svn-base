@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.birthday.dao.IBirthdayWishDAO">
+
+    <!--近期生日-->
+    <select id="selectBirthByPartyId" resultType="com.dwms.birthday.model.vo.BirthdayVO">
+        select
+        u.userId, u.userName, u.partyId, u.fullTime, (year(CURDATE()) - year(u.fullTime)) as years, u.avatar
+        from tb_user_info u where u.partyId = #{form.partyId}
+
+        <if test="form.rangeType!=null">
+            <if test="form.rangeType==0">
+                and date_format( u.fullTime, '%m%d' ) between #{form.beginDate} and #{form.endDate}
+            </if>
+            <if test="form.rangeType==1">
+                and (date_format( u.fullTime, '%m%d' ) &gt;= #{form.beginDate} or date_format( u.fullTime, '%m%d' ) &lt;= #{form.endDate})
+            </if>
+        </if>
+    </select>
+
+    <!--生日祝福-->
+    <select id="selectWish" resultType="com.dwms.birthday.model.vo.WishVO">
+        select
+        w.wishId, w.fromUserId, w.toUserId, w.wishTime, w.wishText, w.wishYear, w.wishType, u.userName as fromUserName, u.avatar as fromUserAvatar
+        from tb_birthday_wish w left join tb_user_info u on w.fromUserId = u.userId
+        where w.status = 1 and w.toUserId = #{form.toUserId}
+
+        <if test="form.wishType!=null">
+            and w.wishType = #{form.wishType}
+        </if>
+
+        <if test="form.wishYear!=null">
+            and w.wishYear = #{form.wishYear}
+        </if>
+
+        order by w.wishType, w.wishTime desc
+    </select>
+</mapper>

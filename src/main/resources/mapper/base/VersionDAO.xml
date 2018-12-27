@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.base.dao.IVersionDAO">
+
+    <resultMap id="BaseResultMap" type="com.dwms.base.model.bean.Version">
+        <id column="verId" property="verId"/><!--版本id-->
+        <result column="appCode" property="appCode"/><!--app标识-->
+        <result column="version" property="version"/><!--版本-->
+        <result column="basicVersion" property="basicVersion"/><!--最低可用版本-->
+        <result column="content" property="content"/><!--版本更新信息-->
+        <result column="downloadUrl" property="downloadUrl"/><!--下载链接-->
+        <result column="remark" property="remark"/><!--备注-->
+        <result column="status" property="status"/><!--状态 0禁用 1预发布 2发布-->
+        <result column="adminId" property="adminId"/><!--管理员id-->
+        <result column="createTime" property="createTime"/><!--创建时间-->
+        <result column="updateTime" property="updateTime"/><!--修改时间-->
+    </resultMap>
+
+    <!--最新版本-->
+    <select id="selectLast" resultMap="BaseResultMap">
+        select verId,appCode,version,basicVersion,content,downloadUrl,updateTime from tb_app_version
+        where status>0
+        <if test="appCode!= null and appCode!=''">
+            and appCode = #{appCode}
+        </if>
+        <if test="status!= null">
+            and status >= #{status}
+        </if>
+        order by createTime desc
+    </select>
+
+</mapper>

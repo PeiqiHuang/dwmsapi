@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.course.dao.ICourseUserDAO">
+
+    <resultMap id="BaseResultMap"
+               type="com.dwms.course.model.bean.CourseUser">
+        <id column="cuId" property="cuId"/>
+        <result column="courseId" property="courseId"/>
+        <result column="userId" property="userId"/>
+        <result column="timeLength" property="timeLength"/>
+        <result column="status" property="status"/>
+        <result column="finishTime" property="finishTime"/>
+        <result column="createTime" property="createTime"/>
+        <result column="progress" property="progress"/>
+        <result column="restChapter" property="restChapter"/>
+    </resultMap>
+
+    <!--课程人员-->
+    <select id="selectByCourseIdAndUserId" resultMap="BaseResultMap">
+        select cu.cuId, cu.courseId, cu.userId, cu.timeLength, cu.status, cu.progress, cu.restChapter
+        from tb_course_user cu
+        where cu.userId=#{userId} and cu.courseId=#{courseId}
+    </select>
+
+    <!--课程列表-->
+    <select id="selectByUserIdAndCourseIds" resultMap="BaseResultMap">
+        select cu.courseId, cu.userId, cu.progress, cu.restChapter from tb_course_user cu
+        where cu.userId=#{userId}
+        <if test="courseIds!=null">
+            and cu.courseId in
+            <foreach collection="courseIds" item="courseId" separator="," open="(" close=")">${courseId}</foreach>
+        </if>
+    </select>
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.due.dao.IDueDAO">
+
+    <resultMap id="BaseResultMap"
+               type="com.dwms.due.model.bean.Due">
+        <id column="dueId" property="dueId"/>
+        <result column="partyId" property="partyId"/>
+        <result column="title" property="title"/>
+        <result column="dueDesc" property="dueDesc"/>
+        <result column="dueItem" property="dueItem"/>
+        <result column="dueType" property="dueType"/>
+        <result column="due" property="due"/>
+        <result column="status" property="status"/>
+        <result column="endTime" property="endTime"/>
+        <result column="releaseTime" property="releaseTime"/>
+        <result column="createTime" property="createTime"/>
+        <result column="accId" property="accId"/>
+    </resultMap>
+
+    <select id="selectByStatus" resultType="com.dwms.due.model.vo.DueVO">
+        select di.dueId, di.title, di.dueDesc, di.dueItem, di.dueType, di.due, di.endTime, du.status
+        from tb_due_user du inner join tb_due_info di on du.dueId=di.dueId and di.status>0
+        where du.userId=#{userId}
+        <if test="status!=null">
+            <if test="status==0">
+                and du.status=0
+            </if>
+            <if test="status==1">
+                and du.status &gt; 0
+            </if>
+        </if>
+        order by du.status asc,di.createTime desc
+    </select>
+
+    <select id="selectByDueIdAndUserId" resultType="com.dwms.due.model.bean.DueUser">
+        select *
+        from tb_due_user du
+        where du.dueId=#{dueId} and du.userId=#{userId}
+    </select>
+</mapper>

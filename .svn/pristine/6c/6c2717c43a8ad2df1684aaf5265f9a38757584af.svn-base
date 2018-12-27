@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.notice.dao.INoticeDAO">
+
+    <resultMap id="BaseResultMap" type="com.dwms.notice.model.bean.Notice">
+        <id column="ntiId" property="ntiId"/>
+        <result column="partyId" property="partyId"/>
+        <result column="title" property="title"/>
+        <result column="subTitle" property="subTitle"/>
+        <result column="cover" property="cover"/>
+        <result column="type" property="type"/>
+        <result column="filePath" property="filePath"/>
+        <result column="operator" property="operator"/>
+        <result column="status" property="status"/>
+        <result column="releaseTime" property="releaseTime"/>
+        <result column="updateTime" property="updateTime"/>
+        <result column="createTime" property="createTime"/>
+    </resultMap>
+
+    <select id="selectByPartyId" resultMap="BaseResultMap">
+        select nt.ntiId, nt.title, nt.subTitle, nt.cover, nt.type, nt.filePath, nt.releaseTime
+        from tb_notice_info nt
+        where nt.status&gt;0 and nt.partyId=#{partyId}
+    </select>
+</mapper>

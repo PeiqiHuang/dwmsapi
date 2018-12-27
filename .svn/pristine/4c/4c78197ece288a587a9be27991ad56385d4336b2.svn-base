@@ -1,0 +1,63 @@
+<config
+        xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+        xmlns:jsr107='http://www.ehcache.org/v3/jsr107'
+        xmlns='http://www.ehcache.org/v3'
+        xsi:schemaLocation="http://www.ehcache.org/v3 http://www.ehcache.org/schema/ehcache-core.xsd">
+
+    <service>
+        <jsr107:defaults enable-management="true" enable-statistics="true"/>
+    </service>
+
+    <!-- 缓存模版,此处为了显示其用法,也可以不用模版直接在cache中配置与模版参数相同 -->
+    <cache-template name="template">
+        <!--<key-type>java.lang.String</key-type>-->
+        <!--<value-type>java.lang.Object</value-type>-->
+        <!--储存层配置-->
+        <expiry>
+            <tti unit="hours">1</tti> <!--使用 TTI(time to idle) 策略-->
+            <!--<ttl unit="hours">1</ttl> &lt;!&ndash;使用 TTL(time to leave)策略 &ndash;&gt;-->
+        </expiry>
+        <resources>
+            <heap unit="entries">2000</heap> <!--配置堆储存-->
+            <offheap unit="MB">20</offheap> <!--配置堆外储存-->
+            <disk unit="MB" persistent="false">20</disk>  <!--配置磁盘持久化储存-->
+        </resources>
+    </cache-template>
+
+    <!-- 地区缓存-->
+    <cache alias="dist" uses-template="template">
+        <resources>
+            <heap unit="entries">100000</heap> <!--配置堆储存-->
+        </resources>
+    </cache>
+
+    <!-- token缓存 -->
+    <cache alias="accessToken">
+        <expiry>
+            <tti unit="hours">48</tti> <!--使用 TTI(time to idle) 策略-->
+        </expiry>
+        <resources>
+            <heap unit="entries">100000</heap> <!--配置堆储存-->
+        </resources>
+    </cache>
+
+    <!-- smsCode缓存 -->
+    <cache alias="smsCode">
+        <expiry>
+            <tti unit="seconds">120</tti> <!--使用 TTI(time to idle) 策略-->
+        </expiry>
+        <resources>
+            <heap unit="entries">100000</heap> <!--配置堆储存-->
+        </resources>
+    </cache>
+
+    <!-- 白名单缓存 -->
+    <cache alias="whiteIP">
+        <expiry>
+            <tti unit="hours">2</tti> <!--使用 TTI(time to idle) 策略-->
+        </expiry>
+        <resources>
+            <heap unit="entries">100000</heap> <!--配置堆储存-->
+        </resources>
+    </cache>
+</config>

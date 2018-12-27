@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.course.dao.ICourseCategoryDAO">
+
+    <resultMap id="BaseResultMap"
+               type="com.dwms.course.model.bean.CourseCategory">
+        <id column="categoryId" property="categoryId"/>
+        <result column="categoryName" property="categoryName"/>
+        <result column="status" property="status"/>
+        <result column="weight" property="weight"/>
+        <result column="partyId" property="partyId"/>
+    </resultMap>
+
+</mapper>

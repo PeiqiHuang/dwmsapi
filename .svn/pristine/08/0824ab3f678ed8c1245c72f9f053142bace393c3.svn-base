@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.meeting.dao.IMeetingUserDAO">
+
+    <resultMap id="BaseResultMap"
+               type="com.dwms.meeting.model.bean.MeetingUser">
+        <id column="muId" property="muId"/>
+        <result column="mtgId" property="mtgId"/>
+        <result column="userId" property="userId"/>
+        <result column="signWay" property="signWay"/>
+        <result column="offReason" property="offReason"/>
+        <result column="status" property="status"/>
+        <result column="readSummary" property="readSummary"/>
+        <result column="signTime" property="signTime"/>
+        <result column="createTime" property="createTime"/>
+    </resultMap>
+
+    <!--会议人员列表-->
+    <select id="selectSelective" resultType="com.dwms.meeting.model.vo.MeetUserVO">
+        select mu.userId, mu.status, ui.userName, ui.avatar
+        from tb_meeting_user mu left join tb_user_info ui on ui.userId=mu.userId
+        where mu.mtgId=#{mtgId}
+    </select>
+
+    <!--查询会议人员信息-->
+    <select id="selectByMtgIdAndUserId" resultMap="BaseResultMap">
+        select *
+        from tb_meeting_user mu
+        where mu.mtgId=#{mtgId} and mu.userId=#{userId}
+    </select>
+</mapper>

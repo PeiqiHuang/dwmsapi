@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.user.dao.IUserDAO">
+
+    <resultMap id="User" type="com.dwms.user.model.bean.User">
+        <id column="userId" property="userId"/>
+        <result column="userName" property="userName"/>
+        <result column="mobile" property="mobile"/>
+        <result column="avatar" property="avatar"/>
+        <result column="gender" property="gender"/>
+        <result column="workStatus" property="workStatus"/>
+        <result column="partyId" property="partyId"/>
+        <result column="partyType" property="partyType"/>
+        <result column="partyPosts" property="partyPosts"/>
+        <result column="probationaryTime" property="probationaryTime"/>
+        <result column="fullTime" property="fullTime"/>
+        <result column="source" property="source"/>
+        <result column="status" property="status"/>
+        <result column="createTime" property="createTime"/>
+        <result column="updateTime" property="updateTime"/>
+    </resultMap>
+
+    <resultMap id="UserVO" type="com.dwms.user.model.vo.UserVO">
+        <result column="userId" property="userId"/>
+        <result column="userName" property="userName"/>
+        <result column="mobile" property="mobile"/>
+        <result column="avatar" property="avatar"/>
+        <result column="gender" property="gender"/>
+        <result column="workStatus" property="workStatus"/>
+        <result column="partyId" property="partyId"/>
+        <result column="partyName" property="partyName"/>
+        <result column="partyType" property="partyType"/>
+        <result column="partyPosts" property="partyPosts"/>
+        <result column="fullTime" property="fullTime"/>
+        <result column="probationaryTime" property="probationaryTime"/>
+        <result column="status" property="status"/>
+        <result column="createTime" property="createTime"/>
+    </resultMap>
+
+    <select id="selectById" resultMap="UserVO">
+        select u.userId, u.userName, u.mobile, u.avatar, u.gender, u.workStatus, u.partyId, u.partyType, u.partyPosts, u.fullTime, u.probationaryTime, u.status, p.partyName
+        from tb_user_info u left join tb_party_info p on p.partyId=u.partyId
+        where u.userId=#{userId}
+    </select>
+
+    <select id="selectByMobile" resultMap="UserVO">
+        select u.userId, u.userName, u.mobile, u.avatar, u.gender, u.workStatus, u.partyId, u.partyType, u.partyPosts, u.fullTime, u.probationaryTime, u.status, p.partyName
+        from tb_user_info u left join tb_party_info p on p.partyId=u.partyId
+        where u.mobile=#{mobile}
+    </select>
+
+    <!--党员列表-->
+    <select id="selectByPartyId" resultMap="UserVO">
+        select u.userId, u.userName, u.mobile, u.avatar, u.gender, u.workStatus, u.partyId, u.partyType, u.partyPosts, u.fullTime, u.probationaryTime
+        from tb_user_info u
+        where u.partyId=#{partyId} and u.status=1
+        order by u.partyType desc
+    </select>
+
+    <select id="check" resultType="boolean">
+        <![CDATA[ select count(1)
+    from tb_user_info u
+    where u.mobile=#{mobile} and u.password=#{password} ]]>
+    </select>
+
+    <update id="reset">
+        update tb_user_info set password = #{password}
+        where mobile=#{mobile}
+    </update>
+
+    <update id="upd" parameterType="com.dwms.user.model.form.UpdForm">
+        update tb_user_info
+        <set>
+            <if test="form.gender!=null">
+                gender=#{form.gender},
+            </if>
+            <if test="form.avatar!=null and form.avatar!=''">
+                avatar=#{form.avatar},
+            </if>
+            userId = #{form.userId}
+        </set>
+        where userId = #{form.userId}
+    </update>
+
+</mapper>

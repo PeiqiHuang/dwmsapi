@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.base.dao.IWhiteIPDAO">
+
+    <resultMap id="BaseResultMap"
+               type="com.dwms.base.model.bean.WhiteIP">
+        <id column="wiId" property="wiId"/>
+        <result column="ip" property="ip"/>
+        <result column="description" property="description"/>
+        <result column="status" property="status"/>
+        <result column="adminId" property="adminId"/>
+        <result column="createTime" property="createTime"/>
+        <result column="updateTime" property="updateTime"/>
+    </resultMap>
+</mapper>

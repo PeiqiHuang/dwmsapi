@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.examine.dao.IExamineDAO">
+
+    <resultMap id="BaseResultMap"
+               type="com.dwms.examine.model.bean.Examine">
+        <id column="examId" property="examId"/>
+        <result column="partyId" property="partyId"/>
+        <result column="examName" property="examName"/>
+        <result column="examDesc" property="examDesc"/>
+        <result column="totalScore" property="totalScore"/>
+        <result column="passScore" property="passScore"/>
+        <result column="quNum" property="quNum"/>
+        <result column="timeLength" property="timeLength"/>
+        <result column="showType" property="showType"/>
+        <result column="showTime" property="showTime"/>
+        <result column="pushMsg" property="pushMsg"/>
+        <result column="endMsg" property="endMsg"/>
+        <result column="previewer" property="previewer"/>
+        <result column="status" property="status"/>
+        <result column="beginTime" property="beginTime"/>
+        <result column="endTime" property="endTime"/>
+        <result column="releaseTime" property="releaseTime"/>
+        <result column="createTime" property="createTime"/>
+    </resultMap>
+
+    <select id="selectByEuId" resultType="com.dwms.examine.model.vo.ExamineVO">
+        select ei.examId, ei.examName, ei.examDesc, ei.totalScore, ei.passScore, ei.quNum, ei.timeLength, ei.showType, ei.showTime, ei.pushMsg, ei.endMsg, ei.beginTime, ei.endTime, ei.releaseTime, eu.euId, eu.status
+        from tb_examine_info ei right join tb_examine_user eu on eu.examId=ei.examId and eu.euId=#{euId}
+        where ei.status&gt;0
+    </select>
+
+    <select id="selectSelective" resultType="com.dwms.examine.model.vo.ExamineVO">
+        select ei.examId, ei.examName, ei.examDesc, ei.totalScore, ei.passScore, ei.quNum, ei.timeLength, ei.showType,
+        ei.showTime, ei.pushMsg, ei.endMsg, ei.beginTime, ei.endTime, ei.releaseTime, eu.euId, eu.status
+        from tb_examine_info ei right join tb_examine_user eu on eu.examId=ei.examId and eu.userId=#{form.userId}
+        <if test="form!=null">
+            <if test="form.status!=null">
+                <if test="form.status==-1">
+                    and eu.status=-1
+                </if>
+                <if test="form.status==0">
+                    and eu.status &gt;-1
+                </if>
+            </if>
+        </if>
+        where ei.status &gt; 0
+    </select>
+</mapper>

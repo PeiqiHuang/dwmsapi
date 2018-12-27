@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.activity.dao.IActivityUserDAO">
+
+    <resultMap id="BaseResultMap" type="com.dwms.activity.model.bean.ActivityUser">
+        <id column="auId" property="auId"/>
+        <result column="actId" property="actId"/>
+        <result column="userId" property="userId"/>
+        <result column="status" property="status"/>
+        <result column="updateTime" property="updateTime"/>
+        <result column="createTime" property="createTime"/>
+    </resultMap>
+
+    <!--统计活动人数-->
+    <select id="countList" resultType="com.dwms.activity.model.vo.ActCountVO">
+        select au.actId, count(1) nums from tb_activity_user au where au.status=1 and au.actId in
+        <foreach collection="actIds" item="actId" separator="," open="(" close=")">${actId}</foreach>
+        group by au.actId
+    </select>
+
+    <!--报名-->
+    <select id="selectByActIdAndUserId" resultMap="BaseResultMap">
+        select au.auId, au.actId, au.userId, au.status
+        from tb_activity_user au
+        where au.actId=#{actId} and au.userId=#{userId} and au.status=#{status}
+    </select>
+
+    <!--报名-->
+    <select id="selectByActId" resultType="com.dwms.user.model.vo.UserVO">
+        select au.userId, ui.userName
+        from tb_activity_user au left join tb_user_info ui on ui.userId=au.userId
+        where au.actId=#{actId} and au.status=#{status}
+    </select>
+
+    <!--更新活动人员状态-->
+    <update id="updateStatus">
+        update tb_activity_user set status = #{status}
+        where auId=#{auId}
+    </update>
+</mapper>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.activity.dao.IActivityDAO">
+
+    <resultMap id="BaseResultMap" type="com.dwms.activity.model.bean.Activity">
+        <id column="actId" property="actId"/>
+        <result column="partyId" property="partyId"/>
+        <result column="actName" property="actName"/>
+        <result column="actDesc" property="actDesc"/>
+        <result column="address" property="address"/>
+        <result column="filePath" property="filePath"/>
+        <result column="status" property="status"/>
+        <result column="beginTime" property="beginTime"/>
+        <result column="endTime" property="endTime"/>
+        <result column="applyEndTime" property="applyEndTime"/>
+        <result column="updateTime" property="updateTime"/>
+        <result column="createTime" property="createTime"/>
+    </resultMap>
+
+    <!--活动列表-->
+    <select id="selectSelective" resultType="com.dwms.activity.model.vo.ActivityVO">
+        select
+        ai.actId,ai.partyId,ai.actName,ai.actDesc,ai.actDesc,ai.address,ai.filePath,ai.status,ai.beginTime,ai.endTime,ai.applyEndTime,ai.createTime,au.status
+        as status
+        from tb_activity_info ai left join tb_activity_user au on au.actId=ai.actId and au.userId=#{form.userId} and
+        au.status=1
+        where ai.partyId=#{form.partyId} and ai.status in (-1,1)
+        <if test="form.status!=null">
+            <if test="form.status==0">
+                and ai.applyEndTime &gt; now() and au.status is null
+            </if>
+            <if test="form.status==1">
+                and ai.beginTime &gt; now() and au.status=1
+            </if>
+        </if>
+        order by ai.beginTime desc
+    </select>
+
+</mapper>

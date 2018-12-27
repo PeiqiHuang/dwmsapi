@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.course.dao.ICourseChapterDAO">
+
+    <resultMap id="BaseResultMap"
+               type="com.dwms.course.model.bean.CourseChapter">
+        <id column="chapterId" property="chapterId"/>
+        <result column="parentId" property="parentId"/>
+        <result column="courseId" property="courseId"/>
+        <result column="chapterNo" property="chapterNo"/>
+        <result column="chapterTitle" property="chapterTitle"/>
+        <result column="chapterType" property="chapterType"/>
+        <result column="timeLength" property="timeLength"/>
+        <result column="content" property="content"/>
+    </resultMap>
+
+    <resultMap id="ChapterVO"
+               type="com.dwms.course.model.vo.ChapterVO">
+        <id column="chapterId" property="chapterId"/>
+        <result column="parentId" property="parentId"/>
+        <result column="courseId" property="courseId"/>
+        <result column="chapterNo" property="chapterNo"/>
+        <result column="chapterTitle" property="chapterTitle"/>
+        <result column="chapterType" property="chapterType"/>
+        <result column="timeLength" property="timeLength"/>
+        <result column="content" property="content"/>
+        <result column="userTimeLength" property="userTimeLength"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+    <!--我的课程-->
+    <select id="selectByChapterIdAndUserId" resultMap="ChapterVO">
+        select cc.chapterId, cc.chapterNo, cc.chapterTitle, cc.chapterType, cc.timeLength, ccu.ccuId, ifnull(ccu.timeLength,0) userTimeLength, ifnull(ccu.status,0) status
+        from tb_course_chapter cc left join tb_course_chapter_user ccu on ccu.chapterId=cc.chapterId and ccu.userId=#{userId}
+        where cc.chapterId=#{chapterId}
+    </select>
+
+    <!--课程详情-->
+    <select id="selectDetail" resultMap="ChapterVO">
+        select cc.chapterId, cc.chapterNo, cc.chapterTitle, cc.chapterType, cc.timeLength,
+        ifnull(ccu.timeLength,0) userTimeLength, ifnull(ccu.status,0) status
+        from tb_course_chapter cc left join tb_course_chapter_user ccu on ccu.chapterId=cc.chapterId and
+        ccu.userId=#{form.userId}
+        where cc.courseId=#{form.courseId}
+        <if test="form.chapterType==null">
+            and cc.chapterType=1
+        </if>
+        <if test="form.chapterType!=null">
+            and cc.chapterType=#{form.chapterType}
+        </if>
+        order by cc.chapterNo asc
+    </select>
+
+    <!--我的章节阅读情况-->
+    <select id="selectMy" resultMap="ChapterVO">
+        select cc1.chapterId, cc1.courseId, cc1.chapterNo, cc1.chapterTitle, cc1.chapterType, cc1.timeLength,
+        ccu.ccuId, ifnull(ccu.timeLength,0) userTimeLength, ifnull(ccu.status,0) status
+        from tb_course_chapter cc
+        left join tb_course_chapter cc1 on cc1.courseId=cc.courseId
+        left join tb_course_chapter_user ccu on ccu.chapterId=cc1.chapterId and
+        ccu.userId=#{form.userId}
+        where cc.chapterId=#{form.chapterId}
+        <!--<if test="form.chapterType==null">-->
+        <!--and cc.chapterType=1-->
+        <!--</if>-->
+        <!--<if test="form.chapterType!=null">-->
+        <!--and cc.chapterType=#{form.chapterType}-->
+        <!--</if>-->
+        order by cc1.chapterNo asc
+    </select>
+
+</mapper>

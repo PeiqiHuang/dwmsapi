@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.due.dao.IDueAccountDAO">
+
+    <resultMap id="BaseResultMap"
+               type="com.dwms.due.model.bean.DueAccount">
+        <id column="accId" property="accId"/>
+        <result column="accName" property="accName"/>
+        <result column="partyId" property="partyId"/>
+        <result column="wechatFilePath" property="wechatFilePath"/>
+        <result column="alipayFilePath" property="alipayFilePath"/>
+        <result column="payeeName" property="payeeName"/>
+        <result column="payeeBank" property="payeeBank"/>
+        <result column="payeeAddress" property="payeeAddress"/>
+        <result column="payeeAccount" property="payeeAccount"/>
+        <result column="remark" property="remark"/>
+        <result column="tips" property="tips"/>
+        <result column="status" property="status"/>
+        <result column="updateTime" property="updateTime"/>
+        <result column="createTime" property="createTime"/>
+    </resultMap>
+
+    <select id="selectByAccId" resultType="com.dwms.due.model.bean.DueAccount">
+        select dc.accId, dc.accName, dc.wechatFilePath, dc.alipayFilePath, dc.payeeName, dc.payeeBank, dc.payeeAddress, dc.payeeAccount, dc.remark, dc.tips
+        from tb_due_account dc
+        where dc.status=1 and dc.accId=#{accId}
+    </select>
+</mapper>

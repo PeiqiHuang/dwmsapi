@@ -1,0 +1,142 @@
+package com.dwms;
+
+
+import com.dwms.common.consts.EnvEnum;
+import com.dwms.common.consts.SysConsts;
+import com.dwms.common.util.HttpClientUtils;
+import com.dwms.common.util.YamlUtils;
+import com.google.common.collect.Maps;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TestName;
+import org.springframework.context.annotation.Profile;
+
+import java.lang.reflect.Method;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+
+/**
+ * 测试基类
+ * @author 罗俊标
+ * @date 2015-11-4
+ */
+@Profile("dev")
+public abstract class APITest {
+
+    public final static String TOKEN = "dwms_test";
+    public final static String TOKEN_IOS = "ios";
+    public final static String DEV_SERVICE = "http://localhost:8080/dwmsapi";
+    public final static String TEST_SERVICE = "http://118.178.185.211:12306/dwmsapi";
+    public final static String PROD_SERVICE = "http://118.178.185.211:12306/dwmsapi";
+    public static String ENV = APITest.class.getAnnotation(Profile.class).value()[0];//Profile的环境层级查询：方法>测试类>测试基类
+    public static String TOKEN_YAML = "env/" + ENV + "/token.yml";
+    public static String PREFIX = DEV_SERVICE;
+
+    @Rule
+    public TestName testMethod = new TestName();//获取测试调用方法
+
+    /**
+     * 预设置变量
+     * @author windy
+     * @date 2018-11-21
+     */
+    @Before
+    public void env() throws NoSuchMethodException {
+
+        //调用测试类和方法
+        Class<?> clazz = this.getClass();
+        Method method = clazz.getMethod(testMethod.getMethodName());
+
+        //Profile的环境层级查询：方法>测试类>测试基类
+        Profile profile = method.getAnnotation(Profile.class);
+        if (profile == null) {
+            //测试类profile
+            profile = clazz.getAnnotation(Profile.class);
+            if (profile == null) {
+                profile = APITest.class.getAnnotation(Profile.class);
+            }
+        }
+
+        if (profile != null) {
+            String[] mEnvs = profile.value();
+            if (mEnvs.length > 0) {
+                ENV = mEnvs[0];
+            } else {
+                ENV = EnvEnum.DEV.name();
+            }
+        } else {
+            ENV = EnvEnum.DEV.name();
+        }
+
+        //访问路径和配置文件
+        if (EnvEnum.TEST.current(ENV)) {
+            PREFIX = TEST_SERVICE;
+        } else if (EnvEnum.PROD.current(ENV)) {
+            PREFIX = PROD_SERVICE;
+        } else {
+            PREFIX = DEV_SERVICE;
+        }
+        TOKEN_YAML = "env/" + ENV + "/token.yml";
+    }
+
+    /**
+     * 默认签名信息
+     * @author windy
+     * @date 2018-11-21
+     */
+    protected Map<String, String> defaultSign(Map<String, String> param) {
+        Map<String, String> np = Maps.newHashMap();
+        for (String s : param.keySet()) {
+            if (param.get(s) != null && !"".equals(param.get(s))) {
+                np.put(s, param.get(s));
+            }
+        }
+
+        String key = YamlUtils.get(TOKEN_YAML, TOKEN_IOS);
+        np.put(SysConsts.ACCESS_TOKEN, TOKEN_IOS);
+        np.put(SysConsts.SOURCE, "ios_1_0_0");
+        np.put(SysConsts.TIMESTAMP, String.valueOf(System.currentTimeMillis()));
+        np.put(SysConsts.SIGNATURE, DigestUtils.md5Hex((paramStr(np) + key).getBytes(Charset.forName("UTF-8"))));
+        return np;
+    }
+
+    /**
+     * map转换为url参数字符串
+     * @author windy
+     * @date 2018-11-22
+     */
+    protected static String paramStr(Map<String, String> params) {
+        // 没有包含签名;或者签名值为空
+        if (null == params || params.size() <= 0) {
+            return null;
+        }
+        StringBuffer sb = new StringBuffer();
+        List<String> kl = new ArrayList<String>(params.keySet());
+        // 排序
+        Collections.sort(kl);
+        for (String key : kl) {
+            String value = params.get(key);
+            // 非空值
+            if (null != value && !"".equals(value)) {
+                sb.append(key).append("=").append(value).append("&");
+            }
+        }
+        return sb.substring(0, sb.length() - 1);
+    }
+
+    protected void commonResult(Map<String, String> param, String url) {
+        //签名
+        param = defaultSign(param);
+
+        System.out.println("访问服务:" + url);
+        System.out.println("访问地址:" + url + "?" + paramStr(param));
+        String result = HttpClientUtils.post(url, param);
+        System.out.println(result);
+    }
+}
+

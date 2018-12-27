@@ -1,0 +1,162 @@
+package com.dwms.course.service.impl;
+
+import com.dwms.common.consts.StatusEnum;
+import com.dwms.common.model.ResultBean;
+import com.dwms.common.util.PageUtils;
+import com.dwms.common.util.ResultUtils;
+import com.dwms.common.util.path.CoverUtils;
+import com.dwms.common.util.path.TxtUtils;
+import com.dwms.course.consts.CourseConsts;
+import com.dwms.course.dao.ICourseChapterDAO;
+import com.dwms.course.dao.ICourseChapterUserDAO;
+import com.dwms.course.dao.ICourseDAO;
+import com.dwms.course.dao.ICourseUserDAO;
+import com.dwms.course.mgr.IChapterMgr;
+import com.dwms.course.model.bean.CourseUser;
+import com.dwms.course.model.form.*;
+import com.dwms.course.model.vo.ChapterVO;
+import com.dwms.course.model.vo.CourseVO;
+import com.dwms.course.model.vo.DetailVO;
+import com.dwms.course.service.ICourseService;
+import com.dwms.user.consts.UserConsts;
+import com.dwms.user.dao.IUserDAO;
+import com.dwms.user.model.vo.UserVO;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 课程服务
+ * @author windy
+ * @date 2018-12-06
+ */
+@Service
+public class CourseService implements ICourseService {
+
+    @Resource
+    private ICourseDAO courseDAO;
+    @Resource
+    private ICourseUserDAO courseUserDAO;
+    @Resource
+    private ICourseChapterDAO courseChapterDAO;
+    @Resource
+    private ICourseChapterUserDAO courseChapterUserDAO;
+    @Resource
+    private IUserDAO userDAO;
+    @Resource
+    private IChapterMgr chapterMgr;
+
+    @Override
+    public ResultBean getDetail(DetailForm form) {
+        DetailVO d = courseDAO.selectByCourseId(form.getCourseId());
+        if (d == null) {
+            return ResultUtils.errorBean(StatusEnum.NOT_FOUND, "课程不存在");
+        }
+
+        d = CoverUtils.courseBanner(d);
+        d = TxtUtils.course(d);
+
+        //固定只查询章
+        form.setChapterType(CourseConsts.CHAPTER_TYPE_CHAPTER);
+        List<ChapterVO> cs = courseChapterDAO.selectDetail(form);
+
+        Map<String, Object> data = Maps.newHashMap();
+        data.put("course", d);
+        data.put("chapters", cs);
+        return ResultUtils.successBean(data);
+    }
+
+
+    @Override
+    public ResultBean getList(Page<CourseVO> page, ListForm form) {
+        boolean count = page.getPageNum() > 0 && page.getPageSize() > 0;
+        page = PageHelper.startPage(page.getPageNum(), page.getPageSize(), count).doSelectPage(() -> courseDAO.selectSelective(form));
+
+        if (!page.isEmpty()) {
+            List<CourseVO> cs = page.getResult();
+            cs = CoverUtils.course(cs);
+            cs = TxtUtils.course(cs);
+
+            //进度和剩余课时
+            List<Integer> courseIds = Lists.newArrayList();
+            for (CourseVO c : cs) {
+                courseIds.add(c.getCourseId());
+            }
+            List<CourseUser> cus = courseUserDAO.selectByUserIdAndCourseIds(form.getUserId(), courseIds);
+            for (CourseVO c : cs) {
+                for (CourseUser cu : cus) {
+                    if (c.getCourseId().equals(cu.getCourseId())) {
+                        c.setProgress(cu.getProgress());
+                        c.setRestChapter(cu.getRestChapter());
+                        break;
+                    }
+                }
+                if (c.getProgress() == null) {
+                    c.setProgress(0);
+                }
+                if (c.getRestChapter() == null) {
+                    c.setRestChapter(c.getChapterNum());
+                }
+            }
+        }
+
+        return ResultUtils.successBean(PageUtils.map(page));
+    }
+
+    @Override
+    public ResultBean getMy(Page<CourseVO> page, MyForm form) {
+        boolean count = page.getPageNum() > 0 && page.getPageSize() > 0;
+
+        page = PageHelper.startPage(page.getPageNum(), page.getPageSize(), count).doSelectPage(() -> courseDAO.selectMy(form));
+
+        CoverUtils.course(page.getResult());
+        TxtUtils.course(page.getResult());
+
+        return ResultUtils.successBean(PageUtils.map(page));
+    }
+
+    @Override
+    public ResultBean saveLearn(LearnForm form) {
+        //用户是否存在
+        UserVO user = userDAO.selectById(form.getUserId());
+        if (null == user) {
+            return ResultUtils.errorBean(StatusEnum.USER_NOT_FOUND);
+        } else if (UserConsts.STATUS_OPEN != user.getStatus()) {
+            return ResultUtils.errorBean(StatusEnum.USER_INVALID);
+        }
+
+        DetailVO d = courseDAO.selectByCourseId(form.getCourseId());
+        if (d == null) {
+            return ResultUtils.errorBean(StatusEnum.NOT_FOUND, "课程不存在");
+        }
+
+        CourseUser cu = courseUserDAO.selectByCourseIdAndUserId(form.getCourseId(), form.getUserId());
+        if (cu == null) {
+            cu = new CourseUser();
+            cu.setCourseId(form.getCourseId());
+            cu.setUserId(form.getUserId());
+            cu.setTimeLength(d.getTimeLength());
+            cu.setStatus(CourseConsts.USER_STATUS_GOING);
+            cu.setProgress(0);
+            cu.setRestChapter(d.getChapterNum());
+            courseUserDAO.insertSelective(cu);
+        }
+
+        //TODO:更新课程学习信息
+        return ResultUtils.successBean();
+    }
+
+    @Override
+    public ResultBean updateProgress(SyncForm form) {
+        chapterMgr.updateProgress(form);
+
+        //TODO:更新课程学习信息
+        return ResultUtils.successBean();
+    }
+}

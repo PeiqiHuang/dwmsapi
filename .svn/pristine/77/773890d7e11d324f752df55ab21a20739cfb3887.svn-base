@@ -1,0 +1,27 @@
+#基本文件设置
+file:
+    uploadpath: /home/cpapptest/tomcat_dwms_12306/webapps/dwmsres #上传路径
+    accesspath: http://118.178.185.211:12306/dwmsres #访问路径
+
+#图片设置
+image:
+    root: /image #图片根路径
+    types: jpeg,jpg,png,gif,bmp #常见图片类型
+
+    user:
+      avatar: /image/user/avatar #用户头像地址
+
+    mtgSummary: /mtgSummary #会议纪要
+
+    news:
+        build: /news/build #党建要闻
+
+    due:
+        user: /due/user #上传缴费凭证图片地址
+
+#html文件设置
+html:
+    root: /html
+
+app:
+    aes: s4sdf3hozior55da #app的aes加密key

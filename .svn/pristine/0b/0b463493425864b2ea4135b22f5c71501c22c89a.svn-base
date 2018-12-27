@@ -1,0 +1,131 @@
+package com.dwms.common.util;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * Html内容整理工具
+ * @author windy
+ * @date 2018-12-10
+ */
+public class HtmlContentUtils {
+
+    private static final String COMMENT_PATTERN = "<!--[\\w\\W\\r\\n]*?-->";//HTML注释正则
+    private static Pattern p = Pattern.compile("\\s*|\t|\r|\n");
+
+    /**
+     * 获取html字符串
+     * @author windy
+     * @date 2018-12-10
+     */
+    public static String text(String url) {
+        if (url == null || "".equals(url)) {
+            return null;
+        }
+        try {
+            Document document = Jsoup.parse(new URL(url), 3000);
+            return bodyStr(document.body().html());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * 转换为html字符串
+     * @author windy
+     * @date 2018-12-10
+     */
+    public static String html(String html) {
+        if (html == null || "".equals(html)) {
+            return null;
+        }
+        html = html.replaceAll("\r\n", "<br/>");
+        return html;
+    }
+
+    /**
+     * 去除html注释
+     * @author windy
+     * @date 2018-12-11
+     */
+    public static String htmlComment(String html) {
+        if (html == null || "".equals(html)) {
+            return null;
+        }
+        html = html.replaceAll(COMMENT_PATTERN, "");
+        return html;
+        //        document.write(str.replace(/<!--[\w\W\r\n]*?-->/gmi, '')); // 去除HTML中的注释
+        //        document.write(str.replace(/<[^>]+>/g,"")); // 去除HTML标签
+        //        document.write(str.replace(/(<[^\s\/>]+)\b[^>]*>/gi,"$1>")); // 去除HTML标签中的属性
+    }
+
+
+    /**
+     * html网页转换为字符串
+     * @author windy
+     * @date 2018-12-10
+     */
+    private static String htmlStr(String htmlStr) {
+        String regEx_script = "<script[^>]*?>[\\s\\S]*?<\\/script>"; //定义script的正则表达式
+        String regEx_style = "<style[^>]*?>[\\s\\S]*?<\\/style>"; //定义style的正则表达式
+        String regEx_html = "<[^>]+>"; //定义HTML标签的正则表达式
+
+        Pattern p_script = Pattern.compile(regEx_script, Pattern.CASE_INSENSITIVE);
+        Matcher m_script = p_script.matcher(htmlStr);
+        htmlStr = m_script.replaceAll(""); //过滤script标签
+
+        Pattern p_style = Pattern.compile(regEx_style, Pattern.CASE_INSENSITIVE);
+        Matcher m_style = p_style.matcher(htmlStr);
+        htmlStr = m_style.replaceAll(""); //过滤style标签
+
+        Pattern p_html = Pattern.compile(regEx_html, Pattern.CASE_INSENSITIVE);
+        Matcher m_html = p_html.matcher(htmlStr);
+        htmlStr = m_html.replaceAll(""); //过滤html标签
+
+        return htmlStr.trim(); //返回文本字符串
+    }
+
+    /**
+     * html标签转换为字符串
+     * @author windy
+     * @date 2018-12-10
+     */
+    private static String bodyStr(String content) {
+        // <p>段落替换为换行
+        content = content.replaceAll("<p .*?>", "\r\n");
+        // <br><br/>替换为换行
+        content = content.replaceAll("<br\\s*/?>", "\r\n");
+        // 去掉其它的<>之间的东西
+        content = content.replaceAll("\\<.*?>", "");
+        // 还原HTML
+        // content = HTMLDecoder.decode(content);
+        return content;
+    }
+
+    /**
+     * 去除字符串中的空格、回车、换行符、制表符
+     * @author windy
+     * @date 2018-12-10
+     */
+    private static String replaceBlank(String str) {
+        String dest = "";
+        if (str != null) {
+            Matcher m = p.matcher(str);
+            dest = m.replaceAll("");
+        }
+        return dest;
+    }
+
+    public static void main(String[] args) {
+        text("http://118.178.185.211:12306/dwmsres/html/mtgSummary/10/1543925752900.html");
+        System.out.println(html("test\r\ntest"));
+
+    }
+}

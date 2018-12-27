@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.base.dao.IAdvertDAO">
+    <resultMap id="BaseResultMap" type="com.dwms.base.model.bean.Advert">
+        <id column="adId" property="adId"/>
+        <result column="name" property="name"/>
+        <result column="action" property="action"/>
+        <result column="summary" property="summary"/>
+        <result column="weight" property="weight"/>
+        <result column="adkey" property="adkey"/>
+        <result column="begintime" property="begintime"/>
+        <result column="endtime" property="endtime"/>
+        <result column="status" property="status"/>
+        <result column="createTime" property="createTime"/>
+        <result column="updateTime" property="updateTime"/>
+    </resultMap>
+
+    <!--广告列表-->
+    <select id="selectSelective" resultType="com.dwms.base.model.vo.AdvertVO">
+        select adId,name,action,adkey,beginTime,endTime from tb_advert_info
+        where status>0
+        <if test="form.adKey != null and form.adKey!=''">
+            and adKey = #{form.adKey}
+        </if>
+    </select>
+</mapper>

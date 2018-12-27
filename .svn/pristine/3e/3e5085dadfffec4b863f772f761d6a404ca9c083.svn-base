@@ -1,0 +1,6 @@
+#短信验证
+wisentsoft:
+    sms:
+        dpToken: 20003
+        signKey: jX8OX2Ez1tI5UoVEGJOb5Rm5tJHqNjV37zBV
+        url: http://dywPay.ichsh.com.cn/sms/sendSms.do

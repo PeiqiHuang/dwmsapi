@@ -1,0 +1,156 @@
+package com.dwms.base.controller;
+
+import com.dwms.base.model.bean.District;
+import com.dwms.base.model.form.DistListForm;
+import com.dwms.base.service.ITestService;
+import com.dwms.common.config.SysConfig;
+import com.dwms.common.model.ResultBean;
+import com.dwms.common.util.ResultUtils;
+import com.dwms.crawler.processor.GongChangProcessor;
+import com.github.pagehelper.Page;
+import com.google.common.collect.Maps;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+import springfox.documentation.annotations.ApiIgnore;
+import us.codecraft.webmagic.Spider;
+
+import javax.annotation.Resource;
+import javax.validation.Valid;
+import java.util.Map;
+
+/**
+ * 测试Controller
+ * @author windy
+ * @date 2018-11-19
+ */
+@ApiIgnore
+@Controller
+@RequestMapping("/base/test")
+public class TestController {
+
+    @Resource
+    private ITestService testService;
+    @Resource
+    private SysConfig sysConfig;
+    @Resource
+    private GongChangProcessor gongChangProcessor;
+
+    /**
+     * 爬虫
+     * @author windy
+     * @date 2018-12-11
+     */
+    @RequestMapping("crawler.do")
+    @ResponseBody
+    public ResultBean crawler() {
+        Spider.create(gongChangProcessor).addUrl("http://www.12371.cn/special/xxzd/jh/").thread(1).run();
+        return ResultUtils.successBean();
+    }
+
+    /**
+     * 查询地区
+     * @author windy
+     * @date 2018-11-19
+     */
+    @RequestMapping("get.do")
+    @ResponseBody
+    public ResultBean get(@RequestParam String distCode) {
+        return testService.get(distCode);
+    }
+
+    /**
+     * 测试thymeleaf页面
+     * @author windy
+     * @date 2018-11-19
+     */
+    @RequestMapping("index.do")
+    public ModelAndView index(Page<District> page) {
+        ModelAndView model = new ModelAndView();
+        model.setViewName("base/test/index");
+        Map<String, Object> data = testService.index(page);
+        model.addAllObjects(data);
+        return model;
+    }
+
+    /**
+     * 测试env接口
+     * @author windy
+     * @date 2018-11-19
+     */
+    @RequestMapping("env.do")
+    @ResponseBody
+    public ResultBean env() {
+        Map<String, Object> data = Maps.newHashMap();
+        data.put("env", sysConfig.getEnv());
+        data.put("service", sysConfig.getApiService());
+        return ResultUtils.successBean(data);
+    }
+
+    /**
+     * 测试json接口
+     * @author windy
+     * @date 2018-11-19
+     */
+    @RequestMapping("list.do")
+    @ResponseBody
+    public ResultBean list(Page<District> page, @Valid DistListForm form) {
+        return testService.list(page, form);
+    }
+
+    /**
+     * 测试保存接口
+     * @author windy
+     * @date 2018-11-19
+     */
+    @RequestMapping("save.do")
+    @ResponseBody
+    public ResultBean save() {
+        return testService.save();
+    }
+
+
+    /**
+     * 测试ehcache接口
+     * @author windy
+     * @date 2018-11-19
+     */
+    @RequestMapping("ehcache.do")
+    @ResponseBody
+    public ResultBean ehcache(Page<District> page) {
+        return testService.ehcache(page);
+    }
+
+    /**
+     * 异步异常
+     * @author windy
+     * @date 2018-11-19
+     */
+    @RequestMapping("async.do")
+    @ResponseBody
+    public ResultBean async(@RequestParam String num) {
+        //异步方法
+        ResultBean rs = testService.async(num);
+        Map<String, Object> data = Maps.newHashMap();
+        data.put("num", num);
+        return ResultUtils.successBean(data);
+    }
+
+    /**
+     * 定时线程
+     * @author windy
+     * @date 2018-11-19
+     */
+    @RequestMapping("timer.do")
+    @ResponseBody
+    //    @Scheduled(fixedDelay = 5000L)
+    public void timer() {
+        for (int i = 0; i < 10; i++) {
+            System.out.println("定时线程" + Thread.currentThread().getName() + i);
+
+        }
+        Integer.parseInt("ss");
+    }
+}

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.course.dao.ICourseChapterUserDAO">
+
+    <resultMap id="BaseResultMap"
+               type="com.dwms.course.model.bean.CourseChapterUser">
+        <id column="ccuId" property="ccuId"/>
+        <result column="chapterId" property="chapterId"/>
+        <result column="userId" property="userId"/>
+        <result column="timeLength" property="timeLength"/>
+        <result column="status" property="status"/>
+        <result column="finishTime" property="finishTime"/>
+        <result column="createTime" property="createTime"/>
+    </resultMap>
+
+</mapper>

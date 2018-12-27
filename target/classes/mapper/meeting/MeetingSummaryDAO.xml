@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.meeting.dao.IMeetingSummaryDAO">
+
+    <resultMap id="BaseResultMap" type="com.dwms.meeting.model.bean.MeetingSummary">
+        <id column="sumId" property="sumId"/>
+        <result column="mtgId" property="mtgId"/>
+        <result column="sumTitle" property="sumTitle"/>
+        <result column="operator" property="operator"/>
+        <result column="source" property="source"/>
+        <result column="filePath" property="filePath"/>
+        <result column="status" property="status"/>
+        <result column="releaseTime" property="releaseTime"/>
+        <result column="createTime" property="createTime"/>
+    </resultMap>
+
+    <!--查询会议纪要-->
+    <select id="selectByMtgId" resultMap="BaseResultMap">
+        select * from tb_meeting_summary ms where ms.mtgId=#{mtgId}
+        <if test="status!=null">
+            and ms.status=#{status}
+        </if>
+    </select>
+
+    <!--会议纪要详情-->
+    <select id="selectDetail" resultType="com.dwms.meeting.model.vo.SummaryVO">
+        select ms.sumId, ms.sumTitle, ms.filePath, ms.status, mi.mtgName, mi.mtgTitle, mi.beginTime, mi.endTime, ui1.userName recorderName, ui2.userName hosterName
+        from tb_meeting_summary ms left join tb_meeting_info mi on mi.mtgId=ms.mtgId and mi.status=1
+            left join tb_user_info ui1 on ui1.userId=mi.recorder
+            left join tb_user_info ui2 on ui2.userId=mi.hoster
+        where ms.status>-1 and ms.sumId=#{sumId}
+    </select>
+
+    <!--相关纪要列表-->
+    <select id="selectRelation" resultType="com.dwms.meeting.model.vo.SummaryVO">
+        select ms.sumId, ms.sumTitle, ms.filePath, mi.mtgName, mi.beginTime, mi.endTime
+        from tb_meeting_user mu right join tb_meeting_summary ms on ms.mtgId=mu.mtgId and ms.status=1
+            right join tb_meeting_summary_user msu on msu.userId=mu.userId and msu.sumId=ms.sumId
+            left join tb_meeting_info mi on mu.mtgId=mi.mtgId and mi.status=1
+        where mu.status=1 and mu.userId=#{userId}
+        order by mi.beginTime desc
+    </select>
+
+    <!--发布纪要列表-->
+    <select id="selectRelease" resultType="com.dwms.meeting.model.vo.SummaryVO">
+        select ms.sumId, ms.sumTitle, ms.filePath, ms.status, mi.mtgName, mi.beginTime, mi.endTime
+        from tb_meeting_summary ms inner join tb_meeting_info mi on mi.mtgId=ms.mtgId and mi.status=1 and mi.recorder=#{userId}
+        where ms.status>-1
+        order by mi.beginTime desc
+    </select>
+
+    <!--对应会议列表-->
+    <select id="selectRecorder" resultType="com.dwms.meeting.model.vo.RecorderVO">
+        select mi.mtgId, mi.mtgName, mi.mtgTitle, mi.mtgDesc, mi.address, mi.beginTime, mi.endTime, ui1.userName recorderName, ui2.userName hosterName
+        from tb_meeting_info mi left join tb_meeting_summary ms on ms.mtgId=mi.mtgId and ms.status=1
+            left join tb_user_info ui1 on ui1.userId=mi.recorder and ui1.status=1
+            left join tb_user_info ui2 on ui2.userId=mi.hoster and ui2.status=1
+        where mi.recorder=#{userId} and mi.status=1 and mi.endTime&lt;now() and ms.sumId is null
+        order by mi.beginTime desc
+    </select>
+
+    <!--更新纪要状态-->
+    <update id="updateStatus">
+        update tb_meeting_summary set status = #{status}
+        where mtgId=#{mtgId}
+    </update>
+
+</mapper>

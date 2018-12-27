@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.base.dao.IAccessTokenDAO">
+
+    <resultMap id="BaseResultMap" type="com.dwms.base.model.bean.AccessToken">
+        <id column="accessToken" property="accessToken"/>
+        <result column="secretKey" property="secretKey"/>
+        <result column="remark" property="remark"/>
+        <result column="isAuth" property="isAuth"/>
+        <result column="status" property="status"/>
+        <result column="createTime" property="createTime"/>
+    </resultMap>
+
+</mapper>

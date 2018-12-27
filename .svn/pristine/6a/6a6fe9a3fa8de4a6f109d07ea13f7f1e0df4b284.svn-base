@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.help.dao.IHelpInfoDAO">
+
+    <!--帮助类别列表-->
+    <select id="selectHelpType" resultType="com.dwms.help.model.vo.HelpTypeVO">
+        select t.typeId, t.typeName from tb_help_type t where t.typeStatus = 1 order by t.typeId
+    </select>
+
+    <!--帮助信息列表-->
+    <select id="selectInfoList" resultType="com.dwms.help.model.vo.HelpInfoVO">
+        select
+        i.infoId, i.infoType, i.title from tb_help_info i
+        left join tb_help_type t on i.infoType = t.typeId
+        where i.infoStatus = 1 and t.typeStatus = 1 order by i.infoType, i.infoId;
+    </select>
+
+    <!--帮助信息详情-->
+    <select id="selectInfo" resultType="com.dwms.help.model.vo.HelpInfoVO">
+        select
+        i.infoId, i.infoType, i.title, i.text from tb_help_info i
+        where i.infoStatus = 1 and i.infoId=#{form.infoId};
+    </select>
+</mapper>

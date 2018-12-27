@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.examine.dao.IExamineUserDAO">
+
+    <resultMap id="BaseResultMap"
+               type="com.dwms.examine.model.bean.ExamineUser">
+        <id column="euId" property="euId"/>
+        <result column="examId" property="examId"/>
+        <result column="userId" property="userId"/>
+        <result column="score" property="score"/>
+        <result column="examType" property="examType"/>
+        <result column="status" property="status"/>
+        <result column="finishTime" property="finishTime"/>
+        <result column="createTime" property="createTime"/>
+    </resultMap>
+
+    <select id="selectByExamIdAndUserId">
+        select *
+        from tb_examine_user
+        where examId=#{examId} and userId=#{userId}
+    </select>
+
+    <select id="countByExamIds" resultType="com.dwms.examine.model.vo.CountVO">
+        select examId, count(*) nums
+        from tb_examine_user
+        where examId in
+        <foreach collection="examIds" item="examId" separator="," open="(" close=")">${examId}</foreach>
+        group by examId,userId
+    </select>
+
+</mapper>

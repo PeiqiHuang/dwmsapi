@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.birthday.dao.IWishTempDAO">
+
+    <resultMap id="BaseResultMap" type="com.dwms.birthday.model.bean.WishTemp">
+        <id column="tplId" property="tplId"/>
+        <result column="partyId" property="partyId"/>
+        <result column="wishText" property="wishText"/>
+        <result column="createTime" property="createTime"/>
+    </resultMap>
+
+    <!--祝福模板列表-->
+    <select id="selectByPartyId" resultType="com.dwms.birthday.model.bean.WishTemp">
+        select wt.tplId, wt.partyId, wt.wishText, wt.createTime from tb_birthday_wish_template wt where wt.partyId = #{partyId}
+    </select>
+
+</mapper>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.album.dao.IAlbumDAO">
+
+    <resultMap id="BaseResultMap"
+               type="com.dwms.album.model.bean.Album">
+        <id column="albumId" property="albumId"/>
+        <result column="partyId" property="partyId"/>
+        <result column="albumName" property="albumName"/>
+        <result column="albumDesc" property="albumDesc"/>
+        <result column="cover" property="cover"/>
+        <result column="status" property="status"/>
+        <result column="releaseTime" property="releaseTime"/>
+        <result column="createTime" property="createTime"/>
+    </resultMap>
+
+    <select id="selectByPartyId" resultType="com.dwms.album.model.vo.AlbumVO">
+        select ai.albumId, ai.albumName, ai.albumDesc, ai.cover, ai.releaseTime
+        from tb_album_info ai
+        where ai.status&gt;0 and ai.partyId=#{partyId}
+    </select>
+
+    <select id="countNums" resultType="com.dwms.album.model.vo.CountVO">
+        select ai.albumId,count(ai.aiId) nums from tb_album_img ai
+        where ai.albumId in
+        <foreach collection="albumIds" item="albumId" separator="," open="(" close=")">${albumId}</foreach>
+        group by ai.albumId
+    </select>
+
+</mapper>

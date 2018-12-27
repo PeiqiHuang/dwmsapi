@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.course.dao.ICourseDAO">
+
+    <resultMap id="BaseResultMap"
+               type="com.dwms.course.model.bean.Course">
+        <id column="courseId" property="courseId"/>
+        <result column="partyId" property="partyId"/>
+        <result column="categoryId" property="categoryId"/>
+        <result column="courseName" property="courseName"/>
+        <result column="courseDesc" property="courseDesc"/>
+        <result column="cover" property="cover"/>
+        <result column="filePath" property="filePath"/>
+        <result column="courseType" property="courseType"/>
+        <result column="chapterNum" property="chapterNum"/>
+        <result column="timeLength" property="timeLength"/>
+        <result column="status" property="status"/>
+        <result column="endTime" property="endTime"/>
+        <result column="releaseTime" property="releaseTime"/>
+        <result column="createTime" property="createTime"/>
+    </resultMap>
+
+    <resultMap id="CourseVO"
+               type="com.dwms.course.model.vo.CourseVO">
+        <id column="courseId" property="courseId"/>
+        <result column="partyId" property="partyId"/>
+        <result column="categoryId" property="categoryId"/>
+        <result column="courseName" property="courseName"/>
+        <result column="courseDesc" property="courseDesc"/>
+        <result column="cover" property="cover"/>
+        <result column="banner" property="banner"/>
+        <result column="filePath" property="filePath"/>
+        <result column="courseType" property="courseType"/>
+        <result column="chapterNum" property="chapterNum"/>
+        <result column="timeLength" property="timeLength"/>
+        <result column="status" property="status"/>
+        <result column="endTime" property="endTime"/>
+        <result column="releaseTime" property="releaseTime"/>
+        <result column="createTime" property="createTime"/>
+        <result column="progress" property="progress"/>
+        <result column="restChapter" property="restChapter"/>
+    </resultMap>
+
+    <!--我的课程-->
+    <select id="selectDetail" resultType="com.dwms.course.model.vo.DetailVO">
+        select ci.courseId, ci.courseName, ci.courseDesc, ci.cover, ci.banner, ci.filePath, ci.courseType,
+        ci.chapterNum, ci.timeLength, ci.endTime, ci.releaseTime, ifnull(cu.status,-1) userStatus from tb_course_info ci left join tb_course_user cu on cu.courseId=ci.courseId and cu.userId=#{userId}
+        where ci.status=1
+        <if test="courseId!=null">
+            and ci.courseId=#{courseId}
+        </if>
+    </select>
+
+    <!--课程列表-->
+    <select id="selectSelective" resultMap="CourseVO">
+        select ci.courseId, ci.courseName, ci.courseDesc, ci.cover, ci.filePath, ci.courseType, ci.chapterNum,
+        ci.timeLength, ci.endTime, ci.releaseTime from tb_course_info ci
+        where ci.status=1
+        <if test="form!=null">
+            <if test="form.courseType!=null">
+                and ci.courseType=#{form.courseType}
+            </if>
+            <if test="form.partyId!=null">
+                and ci.partyId=#{form.partyId}
+            </if>
+        </if>
+        order by ci.releaseTime desc
+    </select>
+
+    <!--我的课程-->
+    <select id="selectMy" resultMap="CourseVO">
+        select ci.courseId, ci.courseName, ci.courseDesc, ci.cover, ci.filePath, ci.courseType, ci.chapterNum,
+        ci.timeLength, ci.endTime, ci.releaseTime, cu.progress,cu.restChapter
+        from tb_course_info ci right join tb_course_user cu on
+        cu.courseId=ci.courseId and cu.userId=#{form.userId}
+        <if test="form!=null">
+            <if test="form.status!=null">
+                <if test="form.status==0">
+                    and cu.status in (0,1)
+                </if>
+                <if test="form.status==1">
+                    and cu.status = 1
+                </if>
+            </if>
+        </if>
+        where ci.status=1
+        order by cu.status asc, ci.releaseTime desc
+    </select>
+
+</mapper>

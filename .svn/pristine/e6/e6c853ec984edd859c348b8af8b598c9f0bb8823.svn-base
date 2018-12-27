@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.crawler.dao.ICrawlerTaskDAO">
+
+    <resultMap id="BaseResultMap"
+               type="com.dwms.crawler.model.bean.CrawlerTask">
+        <id column="ctId" property="ctId"/>
+        <result column="name" property="name"/>
+        <result column="keyword" property="keyword"/>
+        <result column="domainName" property="domainName"/>
+        <result column="siteName" property="siteName"/>
+        <result column="requestUrl" property="requestUrl"/>
+        <result column="templatePath" property="templatePath"/>
+        <result column="status" property="status"/>
+        <result column="sysUserId" property="sysUserId"/>
+        <result column="updateTime" property="updateTime"/>
+        <result column="createTime" property="createTime"/>
+    </resultMap>
+
+    <select id="selectByRequestUrl" resultMap="BaseResultMap">
+        select *
+        from tb_crawler_task
+        where status&gt;0 and requestUrl=#{requestUrl}
+    </select>
+
+    <select id="selectLikeRequestUrl" resultMap="BaseResultMap">
+        select *
+        from tb_crawler_task
+        where status&gt;0 and requestUrl like CONCAT(#{requestUrl},'%')
+    </select>
+</mapper>

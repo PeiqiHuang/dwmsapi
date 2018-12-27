@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.msg.dao.IMatterDAO">
+
+    <select id="selectMeeting" resultType="com.dwms.msg.model.vo.MatterVO">
+        select mi.mtgId typeId, mi.mtgName title, mi.beginTime beginTime, mu.status status, 1 type
+        from tb_meeting_info mi inner join tb_meeting_user mu on mu.mtgId=mi.mtgId and mu.userId=#{userId}
+        where mi.status=1 and mi.beginTime&gt;now()
+    </select>
+
+    <select id="selectDue" resultType="com.dwms.msg.model.vo.MatterVO">
+        select di.dueId typeId, di.title title, di.releaseTime beginTime, du.status status, 2 type
+        from tb_due_info di inner join tb_due_user du on du.dueId=di.dueId and du.userId=#{userId}
+        where di.status=1 and di.endTime&gt;now()
+    </select>
+
+    <select id="selectExamine" resultType="com.dwms.msg.model.vo.MatterVO">
+        select eu.euId typeId, ei.examName title, ei.beginTime beginTime, eu.status status, 3 type
+        from tb_examine_info ei inner join tb_examine_user eu on eu.examId=ei.examId and eu.userId=#{userId}
+        where ei.status=1 and ei.endTime&gt;now()
+    </select>
+
+    <select id="selectCourse" resultType="com.dwms.msg.model.vo.MatterVO">
+        select ci.courseId typeId, ci.courseName title, ci.releaseTime beginTime, cu.status status, 4 type
+        from tb_course_info ci inner join tb_course_user cu on cu.courseId=ci.courseId and cu.userId=#{userId}
+        where ci.status=1 and ci.endTime&gt;now()
+    </select>
+</mapper>

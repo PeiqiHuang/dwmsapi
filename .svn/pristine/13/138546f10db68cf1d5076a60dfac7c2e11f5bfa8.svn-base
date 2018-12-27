@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.album.dao.IAlbumImgDAO">
+
+    <resultMap id="BaseResultMap"
+               type="com.dwms.album.model.bean.AlbumImg">
+        <id column="aiId" property="aiId"/>
+        <result column="albumId" property="albumId"/>
+        <result column="imgPath" property="imgPath"/>
+        <result column="aiNo" property="aiNo"/>
+        <result column="createTime" property="createTime"/>
+    </resultMap>
+
+    <select id="selectByAlbumId" resultMap="BaseResultMap">
+        select ai.aiNo, ai.imgPath
+        from tb_album_img ai
+        where ai.albumId=#{albumId}
+    </select>
+</mapper>

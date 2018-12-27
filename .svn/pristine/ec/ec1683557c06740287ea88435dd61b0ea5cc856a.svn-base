@@ -1,0 +1,140 @@
+server:
+    tomcat:
+        uri-encoding: UTF-8
+#    port: 8080
+    servlet:
+        context-path: /dwmsapi
+
+spring:
+    aop:
+        proxy-target-class: false
+        auto: true
+    profiles:
+        active: @spring.profiles.active@
+    jackson:
+        time-zone: GMT+8
+        #date-format: yyyy-MM-dd HH:mm:ss #jackson时间格式化，时间戳相对灵活
+        default-property-inclusion: non_null
+        serialization:
+            write-dates-as-timestamps: true #返回时间戳
+    http:
+        encoding:
+            enabled: true
+            charset: UTF-8
+            force: true
+    thymeleaf:
+        encoding: UTF-8
+        cache: false
+        mode: HTML
+        prefix: classpath:/templates/
+        suffix: .html
+    datasource:
+        type: com.alibaba.druid.pool.DruidDataSource
+        druid:
+            url: jdbc:mysql://120.26.54.153:3306/dwms?characterEncoding=utf8&useSSL=true&allowMultiQueries=true&autoReconnect=true
+            username: dwms
+            password: dwms_20181114
+            driver-class-name: com.mysql.jdbc.Driver
+            # 初始化大小，最小，最大
+            initialSize: 5
+            minIdle: 5
+            maxActive: 20
+            # 配置获取连接等待超时的时间
+            maxWait: 60000
+            # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+            timeBetweenEvictionRunsMillis: 60000
+            # 配置一个连接在池中最小生存的时间，单位是毫秒
+            minEvictableIdleTimeMillis: 300000
+            validationQuery: SELECT 1 FROM t_user
+            testWhileIdle: true
+            testOnBorrow: true
+            testOnReturn: false
+            #是否开启PSCache，PSCache对支持游标的数据库性能提升巨大，oracle建议开启，mysql下建议关闭
+            pool-prepared-statements: false
+            #开启poolPreparedStatements后生效
+            max-pool-prepared-statement-per-connection-size: 20
+            aop-patterns: com.dwms..*.service.*
+            remove-abandoned: true
+            remove-abandoned-timeout: 1800
+            # connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=3000;druid.stat.logSlowSql=true
+            # 配置监控统计拦截的filters，去掉后监控界面sql无法统计，'wall'用于防火墙
+            filters: stat,wall,log4j2
+            filter:
+                stat:
+                    enabled: true
+                    log-slow-sql: true #日志打印sql语句
+                    merge-sql: true #合并执行的相同sql，避免因为参数不同而统计多条sql语句
+                    slow-sql-millis: 1000 #用来配置SQL慢的标准，执行时间超过slowSqlMillis的就是慢
+                    db-type: mysql
+                log4j2:
+                    enabled: true
+                    connection-log-enabled: false
+                    statement-log-enabled: false
+                    result-set-log-enabled: false
+                    statement-executable-sql-log-enable: true
+                    statement-sql-pretty-format: true
+            stat-view-servlet:
+                enabled: true # 是否启用StatViewServlet默认值true
+                urlPattern: /druid/*
+                reset-enable: true #允许手动重置监控数据
+                login-username: dwms
+                login-password: dwms.@Pwd
+            web-stat-filter:
+                enabled: true    #是否启用StatFilter默认值true
+                urlPattern: /*
+                exclusions: '*.gif,*.png,*.jpg,*.html,*.js,*.css,*.ico,/druid/*,/swagger/*' #设置不统计哪些URL
+                session-stat-enable: true
+                session-stat-max-count: 1000
+                profile-enable: true
+    jmx:
+        default-domain: @project.build.finalName@
+    mvc:
+        static-path-pattern: /**
+    messages:
+        encoding: UTF-8
+    servlet:
+        multipart:
+            enabled: true
+            max-file-size: 10MB
+            max-request-size: 20MB
+            file-size-threshold: 0 #默认写入磁盘
+    cache:
+        jcache:
+            config: classpath:/common/ehcache.xml
+logging:
+    config: classpath:env/@spring.profiles.active@/log4j2.yml
+
+mybatis:
+    # 实体扫描路径
+    type-aliases-package: com.dwms..*.model.bean
+    # mapper xml实现扫描路径
+    mapper-locations: classpath:mapper/**/*.xml
+    configuration:
+        jdbc-type-for-null: null
+        map-underscore-to-camel-case: false
+        cache-enabled: false
+
+mapper:
+    mappers:
+        - com.dwms.common.mapper.BaseMapper
+        - com.dwms.common.mapper.IdMapper
+    identity: MYSQL
+    style: normal
+    notEmpty: true #insertSelective 和 updateByPrimaryKeySelective 中，是否判断字符串类型 !=''。
+    enableMethodAnnotation: false #是否支持（getter 和 setter）在方法上使用注解，
+    checkExampleEntityClass: true #校验通用 Example 构造参数 entityClass 是否和当前调用的 Mapper<EntityClass> 类型一致。
+
+#使用pagehelper分页插件
+pagehelper:
+    helperDialect: mysql
+    reasonable: true #分页合理化参数，true表示pageNum<=0查询第一页，pageNum>pages查询最后一页
+    supportMethodsArguments: true
+    params: count=countSql
+    auto-runtime-dialect: true
+    page-size-zero: true #pageSize=0 或者 RowBounds.limit = 0 就会查询出全部的结果
+#    default-count: false
+
+
+# 党务秘书 配置
+dwms:
+    static: /css/**,/js/**,/fonts/**,/img/**,/druid/**,/gifCode,/,/actuator/**,/test/**

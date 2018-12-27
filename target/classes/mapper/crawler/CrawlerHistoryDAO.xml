@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.crawler.dao.ICrawlerHistoryDAO">
+
+    <resultMap id="BaseResultMap" type="com.dwms.crawler.model.bean.CrawlerHistory">
+        <id column="chId" property="chId"/>
+        <result column="ctId" property="ctId"/>
+        <result column="requestUrl" property="requestUrl"/>
+        <result column="filePath" property="filePath"/>
+        <result column="sourceUrl" property="sourceUrl"/>
+        <result column="times" property="times"/>
+        <result column="status" property="status"/>
+        <result column="updateTime" property="updateTime"/>
+        <result column="createTime" property="createTime"/>
+    </resultMap>
+
+    <select id="selectByRequestUrl" resultMap="BaseResultMap">
+        select *
+        from tb_crawler_history
+        where status&gt;-1 and requestUrl=#{requestUrl}
+    </select>
+
+    <select id="selectByRequestUrls" resultMap="BaseResultMap">
+        select *
+        from tb_crawler_history
+        where (status &gt; 0 or times &gt; 100)
+        <if test="requestUrls!=null">
+            and requestUrl in
+            <foreach collection="requestUrls" item="requestUrl" separator="," open="(" close=")">#{requestUrl}</foreach>
+        </if>
+    </select>
+
+    <select id="selectBySourceUrl" resultType="string">
+        select requestUrl
+        from tb_crawler_history
+        where (status&gt;0 or times&gt;100) and sourceUrl=#{sourceUrl}
+    </select>
+</mapper>

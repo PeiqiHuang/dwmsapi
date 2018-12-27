@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <properties resource="generator/mybatis-generator.properties"/>
+    <context id="mysql" targetRuntime="MyBatis3Simple" defaultModelType="flat">
+        <property name="javaFileEncoding" value="UTF-8"/><!--默认使用当前平台的编码-->
+        <property name="index" value="true"/><!--添加索引-->
+
+        <!--bean生成插件-->
+        <plugin type="tk.mybatis.mapper.generator.TemplateFilePlugin">
+            <property name="targetProject" value="${project.basedir}/${java.dir}"/>
+            <property name="targetPackage" value="${base.pkg}.${tableClass.lowerCaseName}.model.bean"/>
+            <property name="templatePath" value="generator/template/bean.ftl"/>
+            <property name="fileName" value="${tableClass.shortClassName}.java"/>
+            <property name="lombok" value="Data"/>
+        </plugin>
+        <!--xml文件生成插件-->
+        <plugin type="tk.mybatis.mapper.generator.TemplateFilePlugin">
+            <property name="targetProject" value="${project.basedir}/${resource.dir}"/>
+            <property name="targetPackage" value="${xml.dir}/${tableClass.lowerCaseName}"/>
+            <property name="templatePath" value="generator/template/xml.ftl"/>
+            <property name="fileName" value="${tableClass.shortClassName}DAO.xml"/>
+        </plugin>
+        <!--DAO接口生成插件-->
+        <plugin type="tk.mybatis.mapper.generator.TemplateFilePlugin">
+            <property name="targetProject" value="${project.basedir}/${java.dir}"/>
+            <property name="targetPackage" value="${base.pkg}.${tableClass.lowerCaseName}.dao"/>
+            <property name="templatePath" value="generator/template/dao.ftl"/>
+            <property name="baseMapper" value="com.dwms.common.mapper.BaseMapper"/>
+            <property name="fileName" value="I${tableClass.shortClassName}DAO.java"/>
+        </plugin>
+        <!--IService接口生成插件-->
+        <plugin type="tk.mybatis.mapper.generator.TemplateFilePlugin">
+            <property name="targetProject" value="${project.basedir}/${java.dir}"/>
+            <property name="targetPackage" value="${base.pkg}.${tableClass.lowerCaseName}.service"/>
+            <property name="templatePath" value="generator/template/iservice.ftl"/>
+            <property name="fileName" value="I${tableClass.shortClassName}Service.java"/>
+        </plugin>
+        <!--Service实现生成插件-->
+        <plugin type="tk.mybatis.mapper.generator.TemplateFilePlugin">
+            <property name="targetProject" value="${project.basedir}/${java.dir}"/>
+            <property name="targetPackage" value="${base.pkg}.${tableClass.lowerCaseName}.service.impl"/>
+            <property name="templatePath" value="generator/template/service.ftl"/>
+            <property name="fileName" value="${tableClass.shortClassName}Service.java"/>
+        </plugin>
+        <!--Controller生成插件-->
+        <plugin type="tk.mybatis.mapper.generator.TemplateFilePlugin">
+            <property name="targetProject" value="${project.basedir}/${java.dir}"/>
+            <property name="targetPackage" value="${base.pkg}.${tableClass.lowerCaseName}.controller"/>
+            <property name="templatePath" value="generator/template/controller.ftl"/>
+            <property name="fileName" value="${tableClass.shortClassName}Controller.java"/>
+        </plugin>
+
+
+        <!-- 阻止生成自动注释 -->
+        <commentGenerator>
+            <property name="suppressDate" value="true"/><!--阻止生成的注释包含时间戳，默认为false-->
+            <property name="suppressAllComments" value="true"/><!--阻止生成注释，默认为false-->
+        </commentGenerator>
+        <!-- 数据库链接地址账号密码 -->
+        <jdbcConnection
+                driverClass="${jdbc.driver-class-name}"
+                connectionURL="${jdbc.url}"
+                userId="${jdbc.username}"
+                password="${jdbc.password}">
+        </jdbcConnection>
+        <!--指定JDBC类型和Java类型如何转换-->
+        <javaTypeResolver
+                type="windy.mybatis.generator.internal.types.MyJavaTypeResolverDefaultImpl">
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+        <!-- 默认生成的Model类，此处不需要 -->
+        <javaModelGenerator targetPackage="${bean.pkg}" targetProject="${project.basedir}/src2/main/java">
+            <property name="enableSubPackages"
+                      value="true"/><!--如果true，MBG会根据catalog和schema来生成子包。如果false就会直接用targetPackage属性。默认为false-->
+            <property name="trimStrings" value="true"/><!--是否对数据库查询结果进行trim操作-->
+        </javaModelGenerator>
+
+        <!-- 配置需要生成的所有表 -->
+        <table tableName="tb_due_info" enableCountByExample="true" enableUpdateByExample="true"
+               enableDeleteByExample="true"
+               enableSelectByExample="true" selectByExampleQueryId="true">
+            <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
+            <property name="rootInterface" value="java.io.Serializable"/>
+            <property name="useActualColumnNames" value="true"/><!--false为采用驼峰命名变量，true实际使用表的column名称-->
+            <!--<columnOverride column="%" typeHandler=""/>-->
+        </table>
+        <!-- 配置需要生成的所有表 -->
+
+        <!-- 配置需要生成的所有表 -->
+        <table tableName="tb_due_info_account" enableCountByExample="true" enableUpdateByExample="true"
+               enableDeleteByExample="true"
+               enableSelectByExample="true" selectByExampleQueryId="true">
+            <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
+            <property name="rootInterface" value="java.io.Serializable"/>
+            <property name="useActualColumnNames" value="true"/><!--false为采用驼峰命名变量，true实际使用表的column名称-->
+            <!--<columnOverride column="%" typeHandler=""/>-->
+        </table>
+
+        <!-- 配置需要生成的所有表 -->
+        <table tableName="tb_due_account" enableCountByExample="true" enableUpdateByExample="true"
+               enableDeleteByExample="true"
+               enableSelectByExample="true" selectByExampleQueryId="true">
+            <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
+            <property name="rootInterface" value="java.io.Serializable"/>
+            <property name="useActualColumnNames" value="true"/><!--false为采用驼峰命名变量，true实际使用表的column名称-->
+            <!--<columnOverride column="%" typeHandler=""/>-->
+        </table>
+
+
+    </context>
+</generatorConfiguration>

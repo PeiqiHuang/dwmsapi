@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.examine.dao.IExamineQuestionUserDAO">
+
+    <resultMap id="BaseResultMap"
+               type="com.dwms.examine.model.bean.ExamineQuestionUser">
+        <id column="equId" property="equId"/>
+        <result column="eqId" property="eqId"/>
+        <result column="euId" property="euId"/>
+        <result column="score" property="score"/>
+        <result column="answer" property="answer"/>
+        <result column="status" property="status"/>
+    </resultMap>
+
+    <select id="selectAnswer" resultType="com.dwms.examine.model.vo.AnswerVO">
+        select eq.eqId, eq.quNo, eq.score, equ.score winScore, equ.answer, equ.status, qi.title, qi.quType, qi.answers, qi.rightKey, qi.analysis, qi.maxNum
+        from tb_examine_question eq left join tb_examine_question_user equ on equ.eqId=eq.eqId and equ.euId=#{euId}
+            left join tb_question_info qi on qi.quId=eq.quId and qi.status&gt;0
+        where eq.examId=#{examId}
+        order by eq.quNo asc
+    </select>
+</mapper>

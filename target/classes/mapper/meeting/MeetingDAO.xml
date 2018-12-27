@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dwms.meeting.dao.IMeetingDAO">
+
+    <resultMap id="BaseResultMap" type="com.dwms.meeting.model.bean.Meeting">
+        <id column="mtgId" property="mtgId"/>
+        <result column="partyId" property="partyId"/>
+        <result column="mtgName" property="mtgName"/>
+        <result column="mtgTitle" property="mtgTitle"/>
+        <result column="mtgDesc" property="mtgDesc"/>
+        <result column="address" property="address"/>
+        <result column="remind" property="remind"/>
+        <result column="signIn" property="signIn"/>
+        <result column="pushMsg" property="pushMsg"/>
+        <result column="recorder" property="recorder"/>
+        <result column="signer" property="signer"/>
+        <result column="signHelp" property="signHelp"/>
+        <result column="status" property="status"/>
+        <result column="beginTime" property="beginTime"/>
+        <result column="endTime" property="endTime"/>
+        <result column="createTime" property="createTime"/>
+        <result column="hoster" property="hoster"/>
+    </resultMap>
+
+    <!--我的会议列表-->
+    <select id="selectMy" resultMap="BaseResultMap">
+        select mi.mtgId, mi.mtgName, mi.address, mi.beginTime, mi.endTime, mu.status
+        from tb_meeting_info mi left join tb_meeting_user mu on mu.mtgId=mi.mtgId and mu.userId=#{form.userId}
+        where mi.status=1 and mi.partyId=#{form.partyId}
+        #类型 -1已结束 0全部 1待参加，默认0
+        <if test="form.type!=null">
+            <if test="form.type==-1">
+                and mi.endTime &lt; now()
+            </if>
+            <if test="form.type==1">
+                and mi.beginTime &gt; now()
+            </if>
+        </if>
+    </select>
+
+    <!--我的会议详情-->
+    <select id="selectMyDetail" resultType="com.dwms.meeting.model.vo.MeetDetailVO">
+        select mi.mtgId, mi.mtgName, mi.mtgTitle, mi.mtgDesc, mi.address, mi.signer, mi.beginTime, mi.endTime, mu.status, ui.userName signerName
+        from tb_meeting_info mi right join tb_meeting_user mu on mu.mtgId=mi.mtgId and mu.userId=#{form.userId}
+            left join tb_user_info ui on ui.userId=mi.signer and ui.status=1
+        where mi.status=1 and mi.mtgId=#{form.mtgId}
+    </select>
+
+</mapper>

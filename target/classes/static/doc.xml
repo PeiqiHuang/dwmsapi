@@ -1,0 +1,2037 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<党务秘书API接口>
+    <接入说明>
+        <签名参数>
+            <param name="dw_token">访问token</param>
+            <param name="dw_source">来源,来源_版本号，如 ios_1_0_0或者 android_1_0_0</param>
+            <param name="dw_timestamp">时间戳</param>
+            <param name="dw_signature">签名</param>
+        </签名参数>
+        <签名算法>
+            1、将dw_token,dw_source,dw_timestamp,dw_timestamp和其他非空值参数进行字典序排序
+            2、将排序后的参数使用URL键值对的格式（即key1=value1&amp;key2=value2…）拼接成字符串s
+            3、将密钥拼接在字符串s后面
+            4、对拼接字符串进行MD5加密，即dw_signature=MD5(s)
+            5、开发阶段不传dw_signature将不触发此校验, 带上dw_signature才会触发校验
+        </签名算法>
+        <公共说明>
+            1、分页查询中，不传pageSize和pageNum将返回所有列表数据，不包含page结构，为{"code":"状态码","msg":"状态信息","data":{"objs":[{信息1},{信息2},...]}}
+        </公共说明>
+        <通用返回码>
+            <option value="0">成功</option>
+            <option value="1001">系统错误</option>
+            <option value="1002">重复请求</option>
+            <option value="1003">非法参数</option>
+            <option value="1004">无效接口</option>
+            <option value="1005">无效Token</option>
+            <option value="1006">签名错误</option>
+            <option value="1007">请求超时</option>
+            <option value="1008">外部接口调用异常</option>
+        </通用返回码>
+    </接入说明>
+    <公共模块>
+        <接口 name="获取短信验证码 " address="/common/smsCode.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="mobile">手机号</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息"}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                    <option value="1003">非法参数</option>
+                    <option value="1020">短信发送失败</option>
+                    <option value="1022">操作过于频繁，请120秒后重试</option>
+                </code>
+                <msg>状态信息</msg>
+            </返回值>
+        </接口>
+        <接口 name="广告列表" address="/common/advert.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                </必填参数>
+                <选填参数>
+                    <param name="adKey">广告位置key</param>
+                    <param name="pageNum">分页页码,从1开始</param>
+                    <param name="pageSize">分页显示数</param>
+                </选填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码","msg":"状态信息",
+                    "data":{"page":{分页数据},"objs":[{广告信息1},{广告信息2},...]}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data remark="响应数据">
+                    <objs remark="广告列表">
+                        <attr name="adId">广告id</attr>
+                        <attr name="name">广告名称</attr>
+                        <attr name="action">动作，http://跳转超链接 app://手机端执行</attr>
+                        <attr name="cover">封面图片url</attr>
+                        <attr name="adKey">广告显示位置</attr>
+                        <attr name="beginTime">广告开始时间，时间戳如1543245288000</attr>
+                        <attr name="endTime">广告结束时间，时间戳如1543245288000</attr>
+                    </objs>
+                    <page remark="分页数据">
+                        <attr name="pageNum">分页页码</attr>
+                        <attr name="pageSize">分页显示数</attr>
+                        <attr name="totalPage">总页数</attr>
+                        <attr name="totalNum">总数</attr>
+                    </page>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="版本信息" address="/common/version.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="appCode">app标识</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码","msg":"状态信息",
+                    "data":{"version":{最新版本信息}}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                    <option value="1010">查询不存在</option>
+                </code>
+                <msg>状态信息</msg>
+                <data>
+                    <version remark="最新版本信息">
+                        <attr name="verId">版本id</attr>
+                        <attr name="appCode">app标识</attr>
+                        <attr name="verCode">版本号，如1.0.0</attr>
+                        <attr name="basicVerCode">最低可用版本号，如1.0.0</attr>
+                        <attr name="content">版本更新信息</attr>
+                        <attr name="downloadUrl">下载链接</attr>
+                        <attr name="updateTime">修改时间，时间戳如1543245288000</attr>
+                    </version>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="地区列表（增量）" address="/common/dist.do" wb="张钧泳">
+            <接口描述>
+                1、date日期为返回字段updateTime中的最大日期，date测试数据：20181202，20181203，20181204
+            </接口描述>
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                </必填参数>
+                <选填参数>
+                    <param name="date">上次更新日期，格式YYYYMMDD，如20181202（为空则传获取所有地区信息，否则获取改日期之后更新过的地区信息）</param>
+                </选填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码","msg":"状态信息",
+                    "data":{"objs":[{地址信息1},{地址信息2},...]}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data remark="响应数据">
+                    <objs remark="广告列表">
+                        <districts remark="地区信息列表">
+                            <attr name="distCode">行政区域代码</attr>
+                            <attr name="distName">区域名称</attr>
+                            <attr name="provCode">省级代码</attr>
+                            <attr name="cityCode">市级代码</attr>
+                            <attr name="distDegree">级别(1:省，2:市，3:县)</attr>
+                            <attr name="isTerminal">是否结点(0:否，1是)</attr>
+                            <attr name="distType">地区类型(1:普通,2:直辖市,3:省直管)</attr>
+                            <attr name="distStatus">地区状态(0:停用，1:启用)</attr>
+                            <attr name="createTime">创建时间，时间戳如1543245288000</attr>
+                            <attr name="updateTime">修改时间，时间戳如1543245288000</attr>
+                        </districts>
+                    </objs>
+                    <page remark="分页数据">
+                        <attr name="pageNum">分页页码</attr>
+                        <attr name="pageSize">分页显示数</attr>
+                        <attr name="totalPage">总页数</attr>
+                        <attr name="totalNum">总数</attr>
+                    </page>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="生成二维码" address="/common/qrcode.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="projName">项目名称</param>
+                    <param name="busType">业务类型</param>
+                    <param name="codeVal">代码值</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>
+                    {"code":"状态码", "msg":"状态信息",
+                    "data":{"QRCode":"二维码字符串"}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                    <option value="1003">非法参数</option>
+                </code>
+                <msg>状态信息</msg>
+                <data>
+                    <QRCode>
+                        二维码字符串【结构为chinapost://BASE64(projName/busType/codeVal)】
+                    </QRCode>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="解码二维码" address="/common/dqrcode.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="QRCode">二维码串（包含前缀）</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>
+                    {"code":"状态码", "msg":"状态信息",
+                    "data":{"projName":"项目名称", "busType":"业务类型", "codeVal":"代码值"}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                    <option value="1003">非法参数</option>
+                </code>
+                <msg>状态信息</msg>
+                <data remark="数据信息">
+                    <projName>项目名称</projName>
+                    <busType>业务类型</busType>
+                    <codeVal>代码值</codeVal>
+                </data>
+            </返回值>
+        </接口>
+    </公共模块>
+    <用户模块>
+        <接口 name="用户注册（仅测试使用）" address="/user/testSave.do" wb="张钧泳">
+            <接口描述>
+                默认密码为a12345678，其他数据都采用默认值
+            </接口描述>
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="mobile">手机号</param>
+                    <param name="userName">用户姓名</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"user":{"用户信息"}}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data>
+                    <user>
+                        <attr name="userId">用户id</attr>
+                        <attr name="userName">用户姓名</attr>
+                        <attr name="mobile">手机号</attr>
+                        <attr name="avatar">头像</attr>
+                        <attr name="gender">性别 0未知 1男 2女</attr>
+                        <attr name="workStatus">工作状态 0离职 1在岗 2在职</attr>
+                        <attr name="partyId">党支部id</attr>
+                        <attr name="partyName">党支部名称</attr>
+                        <attr name="partyType">党员类型 1申请入党人 2入党积极分子 3发展对象 4预备党员 5正式党员</attr>
+                        <attr name="partyPosts">党内职务 1普通党员 2支部委员 3支部副书记 4支部书记</attr>
+                        <attr name="fullTime">转为正式党员日期，时间戳如1543245288000</attr>
+                        <attr name="probationaryTime">转为预备党员日期，时间戳如1543245288000</attr>
+                        <attr name="status">状态 0禁用 1启用</attr>
+                        <attr name="createTime">创建时间，时间戳如1543245288000</attr>
+                    </user>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="用户信息" address="/user/get.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户userId</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"user":{"用户信息"}}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                    <option value="1100">用户不存在</option>
+                    <option value="1102">用户被禁用</option>
+                </code>
+                <msg>状态信息</msg>
+                <data>
+                    <user>
+                        <attr name="userId">用户id</attr>
+                        <attr name="userName">用户姓名</attr>
+                        <attr name="mobile">手机号</attr>
+                        <attr name="avatar">头像</attr>
+                        <attr name="gender">性别 0未知 1男 2女</attr>
+                        <attr name="workStatus">工作状态 0离职 1在岗 2在职</attr>
+                        <attr name="partyId">党支部id</attr>
+                        <attr name="partyName">党支部名称</attr>
+                        <attr name="partyType">党员类型 1申请入党人 2入党积极分子 3发展对象 4预备党员 5正式党员</attr>
+                        <attr name="partyPosts">党内职务 1普通党员 2支部委员 3支部副书记 4支部书记</attr>
+                        <attr name="fullTime">转为正式党员日期，时间戳如1543245288000</attr>
+                        <attr name="probationaryTime">转为预备党员日期，时间戳如1543245288000</attr>
+                        <attr name="status">状态 0禁用 1启用</attr>
+                        <attr name="createTime">创建时间，时间戳如1543245288000</attr>
+                    </user>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="登录" address="/user/login.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="mobile">手机号</param>
+                    <param name="password">密码，密码由8—16位数字、字母组成,不能是纯数字或字母（AES加密，key和正则表达由dwmsapi提供）</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"user":{"用户信息"}}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                    <option value="1100">用户不存在</option>
+                    <option value="1102">用户被禁用</option>
+                    <option value="1103">用户名或密码错误</option>
+                    <option value="1104">密码不符合要求</option>
+                </code>
+                <msg>状态信息</msg>
+                <data>
+                    <user>
+                        <attr name="userId">用户id</attr>
+                        <attr name="userName">用户姓名</attr>
+                        <attr name="mobile">手机号</attr>
+                        <attr name="avatar">头像</attr>
+                        <attr name="gender">性别 0未知 1男 2女</attr>
+                        <attr name="workStatus">工作状态 0离职 1在岗 2在职</attr>
+                        <attr name="partyId">党支部id</attr>
+                        <attr name="partyName">党支部名称</attr>
+                        <attr name="partyType">党员类型 1申请入党人 2入党积极分子 3发展对象 4预备党员 5正式党员</attr>
+                        <attr name="partyPosts">党内职务 1普通党员 2支部委员 3支部副书记 4支部书记</attr>
+                        <attr name="fullTime">转为正式党员日期，时间戳如1543245288000</attr>
+                        <attr name="probationaryTime">转为预备党员日期，时间戳如1543245288000</attr>
+                        <attr name="status">状态 0禁用 1启用</attr>
+                        <attr name="createTime">创建时间，时间戳如1543245288000</attr>
+                    </user>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="重设密码" address="/user/reset.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="mobile">手机号</param>
+                    <param name="password">密码，密码由8—16位数字、字母组成,不能是纯数字或字母（AES加密，key和正则表达由dwmsapi提供）</param>
+                    <param name="smsCode">短信验证码，4位</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"user":{"用户信息"}}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                    <option value="1021">短信验证码错误</option>
+                    <option value="1100">用户不存在</option>
+                    <option value="1102">用户被禁用</option>
+                    <option value="1104">密码不符合要求</option>
+                </code>
+                <msg>状态信息</msg>
+                <data>
+                    <user>
+                        <attr name="userId">用户id</attr>
+                        <attr name="userName">用户姓名</attr>
+                        <attr name="mobile">手机号</attr>
+                        <attr name="avatar">头像</attr>
+                        <attr name="gender">性别 0未知 1男 2女</attr>
+                        <attr name="workStatus">工作状态 0离职 1在岗 2在职</attr>
+                        <attr name="partyId">党支部id</attr>
+                        <attr name="partyName">党支部名称</attr>
+                        <attr name="partyType">党员类型 1申请入党人 2入党积极分子 3发展对象 4预备党员 5正式党员</attr>
+                        <attr name="partyPosts">党内职务 1普通党员 2支部委员 3支部副书记 4支部书记</attr>
+                        <attr name="fullTime">转为正式党员日期，时间戳如1543245288000</attr>
+                        <attr name="probationaryTime">转为预备党员日期，时间戳如1543245288000</attr>
+                        <attr name="status">状态 0禁用 1启用</attr>
+                        <attr name="createTime">创建时间，时间戳如1543245288000</attr>
+                    </user>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="修改信息" address="/user/upd.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户userId</param>
+                </必填参数>
+                <选填参数>
+                    <param name="gender">用户userId</param>
+                    <param name="avatarImg" type="FILE">用户头像，限定类型为jpeg,jpg,png,gif,bmp</param>
+                </选填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"user":{"用户信息"}}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                    <option value="1012">插入或更新操作失败</option>
+                    <option value="1030">图片格式错误</option>
+                    <option value="1031">图片上传失败</option>
+                    <option value="1100">用户不存在</option>
+                    <option value="1102">用户被禁用</option>
+                </code>
+                <msg>状态信息</msg>
+                <data>
+                    <user>
+                        <attr name="userId">用户id</attr>
+                        <attr name="userName">用户姓名</attr>
+                        <attr name="mobile">手机号</attr>
+                        <attr name="avatar">头像</attr>
+                        <attr name="gender">性别 0未知 1男 2女</attr>
+                        <attr name="workStatus">工作状态 0离职 1在岗 2在职</attr>
+                        <attr name="partyId">党支部id</attr>
+                        <attr name="partyName">党支部名称</attr>
+                        <attr name="partyType">党员类型 1申请入党人 2入党积极分子 3发展对象 4预备党员 5正式党员</attr>
+                        <attr name="partyPosts">党内职务 1普通党员 2支部委员 3支部副书记 4支部书记</attr>
+                        <attr name="fullTime">转为正式党员日期，时间戳如1543245288000</attr>
+                        <attr name="probationaryTime">转为预备党员日期，时间戳如1543245288000</attr>
+                        <attr name="status">状态 0禁用 1启用</attr>
+                        <attr name="createTime">创建时间，时间戳如1543245288000</attr>
+                    </user>
+                </data>
+            </返回值>
+        </接口>
+    </用户模块>
+    <党支部模块>
+        <接口 name="党支部入驻申请" address="/party/apply.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="partyName">党支部名称</param>
+                    <param name="memNum">党组织人数</param>
+                    <param name="provCode">省级代码</param>
+                    <param name="address">所在地址</param>
+                    <param name="contract">联系人</param>
+                    <param name="mobile">联系电话</param>
+                    <param name="email">邮箱</param>
+                </必填参数>
+                <必填参数>
+                    <param name="cityCode">市级代码</param>
+                    <param name="distCode">区县代码</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息"}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+            </返回值>
+        </接口>
+        <接口 name="党员列表" address="/party/users.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="partyId">党支部id</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"objs":[{"用户信息1"},{"用户信息2"},...]}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data>
+                    <objs>
+                        <attr name="userId">用户id</attr>
+                        <attr name="userName">用户姓名</attr>
+                        <attr name="mobile">手机号</attr>
+                        <attr name="avatar">头像</attr>
+                        <attr name="gender">性别 0未知 1男 2女</attr>
+                        <attr name="workStatus">工作状态 0离职 1在岗 2在职</attr>
+                        <attr name="partyId">党支部id</attr>
+                        <attr name="partyType">党员类型 1申请入党人 2入党积极分子 3发展对象 4预备党员 5正式党员</attr>
+                        <attr name="partyPosts">党内职务</attr>
+                        <attr name="fullTime">转为正式党员日期，时间戳如1543245288000</attr>
+                        <attr name="probationaryTime">转为预备党员日期，时间戳如1543245288000</attr>
+                    </objs>
+                </data>
+            </返回值>
+        </接口>
+    </党支部模块>
+    <会议模块>
+        <接口 name="我的会议列表 " address="/meeting/my.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                    <param name="type">类型 -1已结束 1待参加</param>
+                </必填参数>
+                <选填参数>
+                    <param name="pageNum">分页页码,从1开始</param>
+                    <param name="pageSize">分页显示数</param>
+                </选填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"page":{分页数据},"objs":[{会议信息1},{会议信息2},...]}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data remark="响应数据">
+                    <objs remark="会议列表">
+                        <attr name="mtgId">会议id</attr>
+                        <attr name="mtgName">主题</attr>
+                        <attr name="address">地点</attr>
+                        <attr name="status">会议人员状态 -9已请假 -1未确认 0已确认 1已参加</attr>
+                        <attr name="beginTime">会议开始时间，时间戳如1543245288000</attr>
+                        <attr name="endTime">会议结束时间，时间戳如1543245288000</attr>
+                    </objs>
+                    <page remark="分页数据">
+                        <attr name="pageNum">分页页码</attr>
+                        <attr name="pageSize">分页显示数</attr>
+                        <attr name="totalPage">总页数</attr>
+                        <attr name="totalNum">总数</attr>
+                    </page>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="我的会议详情" address="/meeting/myDetail.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                    <param name="mtgId">会议id</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码","msg":"状态信息",
+                    "data":{"meeting":{会议数据},"offs":[{请假人信息1},...],"waitings":[{待定人信息1},...],"confirms":[{参加人信息},...],"signins":[{已签到人信息1},...]}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data remark="响应数据">
+                    <meeting remark="会议数据">
+                        <attr name="mtgId">会议id</attr>
+                        <attr name="mtgName">主题</attr>
+                        <attr name="mtgTitle">议题</attr>
+                        <attr name="mtgDesc">会议要求</attr>
+                        <attr name="address">地点</attr>
+                        <attr name="signer">签到负责人userId</attr>
+                        <attr name="signerName">签到负责人</attr>
+                        <attr name="status">会议人员状态 -9已请假 -1未确认 0已确认 1已参加</attr>
+                        <attr name="beginTime">会议开始时间，时间戳如1543245288000</attr>
+                        <attr name="endTime">会议结束时间，时间戳如1543245288000</attr>
+                    </meeting>
+                    <signins remarks="已签到人列表">
+                        <attr name="userId">用户id</attr>
+                        <attr name="userName">用户姓名</attr>
+                        <attr name="avatar">头像</attr>
+                        <attr name="status">状态 -9请假 -1未确认 0已确认（未签到） 1已签到</attr>
+                    </signins>
+                    <confirms remarks="参加人列表">
+                        <attr name="userId">用户id</attr>
+                        <attr name="userName">用户姓名</attr>
+                        <attr name="avatar">头像</attr>
+                        <attr name="status">状态 -9请假 -1未确认 0已确认（未签到） 1已签到</attr>
+                    </confirms>
+                    <waitings remarks="待定人列表">
+                        <attr name="userId">用户id</attr>
+                        <attr name="userName">用户姓名</attr>
+                        <attr name="avatar">头像</attr>
+                        <attr name="status">状态 -9请假 -1未确认 0已确认（未签到） 1已签到</attr>
+                    </waitings>
+                    <offs remarks="请假人列表">
+                        <attr name="userId">用户id</attr>
+                        <attr name="userName">用户姓名</attr>
+                        <attr name="avatar">头像</attr>
+                        <attr name="status">状态 -9请假 -1未确认 0已确认（未签到） 1已签到</attr>
+                    </offs>
+
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="报名" address="/meeting/apply.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                    <param name="mtgId">会议id</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码","msg":"状态信息"}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+            </返回值>
+        </接口>
+        <接口 name="请假" address="/meeting/off.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                    <param name="mtgId">会议id</param>
+                    <param name="offReason">请假原因</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码","msg":"状态信息"}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+            </返回值>
+        </接口>
+        <接口 name="签到" address="/meeting/signIn.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                    <param name="mtgId">会议id</param>
+                    <param name="signWay">签到方式 1自签（扫码） 2代签</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码","msg":"状态信息"}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+            </返回值>
+        </接口>
+        <接口 name="纪要详情 " address="/meeting/summary/detail.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="sumId">纪要id</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"summary":{纪要数据},"reads":[{已读人员信息1},{已读人员信息2},...]}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data remark="响应数据">
+                    <summary remark="纪要数据">
+                        <attr name="sumId">纪要id</attr>
+                        <attr name="sumTitle">纪要标题</attr>
+                        <attr name="filePath">文件地址</attr>
+                        <attr name="mtgName">会议主题</attr>
+                        <attr name="mtgTitle">会议议题</attr>
+                        <attr name="recorderName">记录负责人</attr>
+                        <attr name="hosterName">主持负责人</attr>
+                        <attr name="beginTime">广告开始时间，时间戳如1543245288000</attr>
+                        <attr name="endTime">广告结束时间，时间戳如1543245288000</attr>
+                        <attr name="content">纪要内容</attr>
+                    </summary>
+                    <reads remark="已读人员列表">
+                        <attr name="userName">用户名</attr>
+                    </reads>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="相关纪要列表 " address="/meeting/summary/relation.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                </必填参数>
+                <选填参数>
+                    <param name="pageNum">分页页码,从1开始</param>
+                    <param name="pageSize">分页显示数</param>
+                </选填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"page":{分页数据},"objs":[{纪要信息1},{纪要信息2},...]}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data remark="响应数据">
+                    <objs remark="会议列表">
+                        <attr name="sumId">纪要id</attr>
+                        <attr name="sumTitle">纪要标题</attr>
+                        <attr name="filePath">文件地址</attr>
+                        <attr name="mtgName">会议主题</attr>
+                        <attr name="beginTime">广告开始时间，时间戳如1543245288000</attr>
+                        <attr name="endTime">广告结束时间，时间戳如1543245288000</attr>
+                    </objs>
+                    <page remark="分页数据">
+                        <attr name="pageNum">分页页码</attr>
+                        <attr name="pageSize">分页显示数</attr>
+                        <attr name="totalPage">总页数</attr>
+                        <attr name="totalNum">总数</attr>
+                    </page>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="发布纪要列表" address="/meeting/summary/release.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                </必填参数>
+                <选填参数>
+                    <param name="pageNum">分页页码,从1开始</param>
+                    <param name="pageSize">分页显示数</param>
+                </选填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"page":{分页数据},"objs":[{纪要信息1},{纪要信息2},...]}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data remark="响应数据">
+                    <objs remark="会议列表">
+                        <attr name="sumId">纪要id</attr>
+                        <attr name="sumTitle">纪要标题</attr>
+                        <attr name="filePath">文件地址</attr>
+                        <attr name="mtgName">会议主题</attr>
+                        <attr name="mtgTitle">会议议题</attr>
+                        <attr name="recorderName">记录负责人</attr>
+                        <attr name="hosterName">主持负责人</attr>
+                        <attr name="status">状态 0待发布 1已发布</attr>
+                        <attr name="beginTime">广告开始时间，时间戳如1543245288000</attr>
+                        <attr name="endTime">广告结束时间，时间戳如1543245288000</attr>
+                    </objs>
+                    <page remark="分页数据">
+                        <attr name="pageNum">分页页码</attr>
+                        <attr name="pageSize">分页显示数</attr>
+                        <attr name="totalPage">总页数</attr>
+                        <attr name="totalNum">总数</attr>
+                    </page>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="对应会议列表" address="/meeting/summary/recorder.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"objs":[{会议信息1},{会议信息2},...]}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data remark="响应数据">
+                    <objs remark="会议列表">
+                        <attr name="mtgId">会议id</attr>
+                        <attr name="mtgName">会议主题</attr>
+                        <attr name="mtgTitle">会议议题</attr>
+                        <attr name="mtgDesc">会议要求</attr>
+                        <attr name="address">地点</attr>
+                        <attr name="recorderName">记录负责人</attr>
+                        <attr name="hosterName">主持负责人</attr>
+                        <attr name="beginTime">广告开始时间，时间戳如1543245288000</attr>
+                        <attr name="endTime">广告结束时间，时间戳如1543245288000</attr>
+                    </objs>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="保存纪要" address="/meeting/summary/save.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                    <param name="mtgId">会议id</param>
+                    <param name="sumTitle">纪要标题</param>
+                    <param name="content">纪要内容</param>
+                    <param name="status">状态 0待发布 1发布</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码","msg":"状态信息"}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+            </返回值>
+        </接口>
+        <接口 name="修改纪要" address="/meeting/summary/upd.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                    <param name="sumId">纪要id</param>
+                    <param name="sumTitle">纪要标题</param>
+                    <param name="content">纪要内容</param>
+                    <param name="status">状态 0待发布 1发布</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码","msg":"状态信息"}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+            </返回值>
+        </接口>
+        <接口 name="删除纪要" address="/meeting/summary/del.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                    <param name="sumId">纪要id</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码","msg":"状态信息"}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+            </返回值>
+        </接口>
+        <接口 name="已读纪要" address="/meeting/summary/read.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                    <param name="sumId">纪要id</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码","msg":"状态信息"}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+            </返回值>
+        </接口>
+    </会议模块>
+    <活动模块>
+        <接口 name="活动详情" address="/act/detail.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="actId">活动id</param>
+                </必填参数>
+                <选填参数>
+                    <param name="userId">用户id</param>
+                </选填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"activity":{活动数据},"apply":{是否报名},"applys":[{已报名信息1},...]}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data remark="响应数据">
+                    <activity remark="会议列表">
+                        <attr name="actId">活动id</attr>
+                        <attr name="partyId">党支部id</attr>
+                        <attr name="actName">活动名称</attr>
+                        <attr name="actDesc">活动详情</attr>
+                        <attr name="address">活动地址</attr>
+                        <attr name="filePath">活动文件地址</attr>
+                        <attr name="status">状态 -1已取消 0待发布 1已发布</attr>
+                        <attr name="beginTime">活动开始时间，时间戳如1543245288000</attr>
+                        <attr name="endTime">活动结束时间，时间戳如1543245288000</attr>
+                        <attr name="applyEndTime">报名截止时间，时间戳如1543245288000</attr>
+                        <attr name="updateTime">修改时间，时间戳如1543245288000</attr>
+                        <attr name="createTime">创建时间，时间戳如1543245288000</attr>
+                    </activity>
+                    <attr name="apply">是否报名 0否 1是</attr>
+                    <applys remark="已报名人员列表">
+                        <attr name="userId">用户id</attr>
+                        <attr name="userName">用户名称</attr>
+                    </applys>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="活动列表 " address="/act/list.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                </必填参数>
+                <选填参数>
+                    <param name="status">状态 0待报名 1已报名，不传查询所有</param>
+                    <param name="pageNum">分页页码,从1开始</param>
+                    <param name="pageSize">分页显示数</param>
+                </选填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"page":{分页数据},"objs":[{活动信息1},{活动信息2},...]}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data remark="响应数据">
+                    <objs remark="活动列表">
+                        <attr name="actId">活动id</attr>
+                        <attr name="partyId">党支部id</attr>
+                        <attr name="actName">活动名称</attr>
+                        <attr name="actDesc">活动详情</attr>
+                        <attr name="address">活动地址</attr>
+                        <attr name="nums">已报名人数</attr>
+                        <attr name="filePath">活动文件地址</attr>
+                        <attr name="status">活动状态 -1已结束 0待报名 1已报名 2进行中</attr>
+                        <attr name="beginTime">活动开始时间，时间戳如1543245288000</attr>
+                        <attr name="endTime">活动结束时间，时间戳如1543245288000</attr>
+                        <attr name="applyEndTime">报名截止时间，时间戳如1543245288000</attr>
+                        <attr name="updateTime">修改时间，时间戳如1543245288000</attr>
+                        <attr name="createTime">创建时间，时间戳如1543245288000</attr>
+                    </objs>
+                    <page remark="分页数据">
+                        <attr name="pageNum">分页页码</attr>
+                        <attr name="pageSize">分页显示数</attr>
+                        <attr name="totalPage">总页数</attr>
+                        <attr name="totalNum">总数</attr>
+                    </page>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="报名" address="/act/apply.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                    <param name="actId">活动id</param>
+                    <param name="status">状态 0取消报名 1报名</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码","msg":"状态信息"}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+            </返回值>
+        </接口>
+    </活动模块>
+    <微党课模块>
+        <接口 name="课程详情" address="/course/detail.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="actId">活动id</param>
+                    <param name="userId">用户id</param>
+                    <param name="courseId">课程id</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"course":{课程详情},"chapters":[{章节信息1},{章节信息2},...]}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data remark="响应数据">
+                    <course remark="课程详情">
+                        <attr name="courseId">课程id</attr>
+                        <attr name="courseName">课程名称</attr>
+                        <attr name="courseDesc">课程简介</attr>
+                        <attr name="cover">课程封面</attr>
+                        <attr name="banner">课程详情顶部图片</attr>
+                        <attr name="filePath">文件地址</attr>
+                        <attr name="courseType">类型 0选修 1必修</attr>
+                        <attr name="chapterNum">总课时</attr>
+                        <attr name="timeLength">总时长（分钟）</attr>
+                        <attr name="endTime">截止日期，时间戳如1543245288000</attr>
+                        <attr name="releaseTime">发布时间，时间戳如1543245288000</attr>
+                        <attr name="userStatus">课程状态 -1未生效 0已生效（未完成） 1已完成</attr>
+                    </course>
+                    <chapters remark="章节信息列表">
+                        <attr name="chapterId">课程章节id</attr>
+                        <attr name="chapterNo">章节序号 0，1，2</attr>
+                        <attr name="chapterTitle">标题</attr>
+                        <attr name="chapterType">章节类型 1章 2节</attr>
+                        <attr name="timeLength">章节时长（分钟）</attr>
+                        <attr name="userTimeLength">用户学习时长（分钟）</attr>
+                        <attr name="status">状态 0未完成 1已完成</attr>
+                    </chapters>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="课程列表" address="/course/list.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="actId">活动id</param>
+                    <param name="userId">用户id</param>
+                </必填参数>
+                <选填参数>
+                    <param name="courseType">类型 0选修 1必修，不传查询所有</param>
+                    <param name="pageNum">分页页码,从1开始</param>
+                    <param name="pageSize">分页显示数</param>
+                </选填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"page":{分页数据},"objs":[{课程信息1},{课程信息2},...]}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data remark="响应数据">
+                    <objs remark="活动列表">
+                        <attr name="courseId">课程id</attr>
+                        <attr name="courseName">课程名称</attr>
+                        <attr name="courseDesc">课程简介</attr>
+                        <attr name="cover">课程封面</attr>
+                        <attr name="filePath">文件地址</attr>
+                        <attr name="courseType">类型 0选修 1必修</attr>
+                        <attr name="chapterNum">总课时</attr>
+                        <attr name="timeLength">总时长（分钟）</attr>
+                        <attr name="endTime">截止日期，时间戳如1543245288000</attr>
+                        <attr name="releaseTime">发布时间，时间戳如1543245288000</attr>
+                        <attr name="progress">进度，整数，100表示100%</attr>
+                        <attr name="restChapter">剩余课时</attr>
+                    </objs>
+                    <page remark="分页数据">
+                        <attr name="pageNum">分页页码</attr>
+                        <attr name="pageSize">分页显示数</attr>
+                        <attr name="totalPage">总页数</attr>
+                        <attr name="totalNum">总数</attr>
+                    </page>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="我的课程" address="/course/my.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                </必填参数>
+                <选填参数>
+                    <param name="status">状态 0未完成 1已完成，不传查询所有</param>
+                    <param name="pageNum">分页页码,从1开始</param>
+                    <param name="pageSize">分页显示数</param>
+                </选填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"page":{分页数据},"objs":[{活动信息1},{活动信息2},...]}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data remark="响应数据">
+                    <objs remark="活动列表">
+                        <attr name="courseId">课程id</attr>
+                        <attr name="courseName">课程名称</attr>
+                        <attr name="courseDesc">课程简介</attr>
+                        <attr name="cover">课程封面</attr>
+                        <attr name="filePath">文件地址</attr>
+                        <attr name="courseType">类型 0选修 1必修</attr>
+                        <attr name="chapterNum">总课时</attr>
+                        <attr name="timeLength">总时长（分钟）</attr>
+                        <attr name="endTime">截止日期，时间戳如1543245288000</attr>
+                        <attr name="releaseTime">发布时间，时间戳如1543245288000</attr>
+                        <attr name="progress">进度，整数，100表示100%</attr>
+                        <attr name="restChapter">剩余课时</attr>
+                    </objs>
+                    <page remark="分页数据">
+                        <attr name="pageNum">分页页码</attr>
+                        <attr name="pageSize">分页显示数</attr>
+                        <attr name="totalPage">总页数</attr>
+                        <attr name="totalNum">总数</attr>
+                    </page>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="加入学习" address="/course/learn.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                    <param name="courseId">课程id</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息"}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+            </返回值>
+        </接口>
+        <接口 name="更新进度" address="/course/progress.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                    <param name="chapterId">课程章节id</param>
+                    <param name="min">已读分钟</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息"}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+            </返回值>
+        </接口>
+    </微党课模块>
+    <党建要闻模块>
+        <接口 name="首页要闻 " address="/news/build/index.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"objs":[{要闻信息1},{要闻信息2},...]}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data remark="响应数据">
+                    <objs remark="活动列表">
+                        <attr name="nbId">要闻id</attr>
+                        <attr name="title">标题</attr>
+                        <attr name="cover">封面</attr>
+                        <attr name="source">来源</attr>
+                        <attr name="sourceUrl">跳转链接</attr>
+                        <attr name="filePath">保存文件地址</attr>
+                        <attr name="releaseTime">发布时间，时间戳如1543245288000</attr>
+                    </objs>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="要闻列表 " address="/news/build/list.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="keyword">关键字,活动gcdyhd,讲话gcdyjh,特稿gcdytg,微视gcdyws,研讨gcdyyt</param>
+                </必填参数>
+                <选填参数>
+                    <param name="pageNum">分页页码,从1开始</param>
+                    <param name="pageSize">分页显示数</param>
+                </选填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"page":{分页数据},"objs":[{要闻信息1},{要闻信息2},...]}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data remark="响应数据">
+                    <objs remark="活动列表">
+                        <attr name="nbId">要闻id</attr>
+                        <attr name="title">标题</attr>
+                        <attr name="cover">封面</attr>
+                        <attr name="source">来源</attr>
+                        <attr name="sourceUrl">跳转链接</attr>
+                        <attr name="filePath">保存文件地址</attr>
+                        <attr name="releaseTime">发布时间，时间戳如1543245288000</attr>
+                    </objs>
+                    <page remark="分页数据">
+                        <attr name="pageNum">分页页码</attr>
+                        <attr name="pageSize">分页显示数</attr>
+                        <attr name="totalPage">总页数</attr>
+                        <attr name="totalNum">总数</attr>
+                    </page>
+                </data>
+            </返回值>
+        </接口>
+    </党建要闻模块>
+    <通知公告模块>
+        <接口 name="首页公告 " address="/notice/index.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="partyId">党支部id</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"objs":[{公告信息1},{公告信息2},...]}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data remark="响应数据">
+                    <objs remark="活动列表">
+                        <attr name="ntiId">公告id</attr>
+                        <attr name="title">标题</attr>
+                        <attr name="subTitle">副标题</attr>
+                        <attr name="cover">通告封面</attr>
+                        <attr name="type">类型 1文字消息 2图文消息</attr>
+                        <attr name="filePath">保存文件地址</attr>
+                        <attr name="releaseTime">发布时间，时间戳如1543245288000</attr>
+                    </objs>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="公告列表 " address="/notice/list.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="partyId">党支部id</param>
+                </必填参数>
+                <选填参数>
+                    <param name="pageNum">分页页码,从1开始</param>
+                    <param name="pageSize">分页显示数</param>
+                </选填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"page":{分页数据},"objs":[{公告信息1},{公告信息2},...]}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data remark="响应数据">
+                    <objs remark="活动列表">
+                        <attr name="ntiId">公告id</attr>
+                        <attr name="title">标题</attr>
+                        <attr name="subTitle">副标题</attr>
+                        <attr name="cover">通告封面</attr>
+                        <attr name="type">类型 1文字消息 2图文消息</attr>
+                        <attr name="filePath">保存文件地址</attr>
+                        <attr name="releaseTime">发布时间，时间戳如1543245288000</attr>
+                    </objs>
+                    <page remark="分页数据">
+                        <attr name="pageNum">分页页码</attr>
+                        <attr name="pageSize">分页显示数</attr>
+                        <attr name="totalPage">总页数</attr>
+                        <attr name="totalNum">总数</attr>
+                    </page>
+                </data>
+            </返回值>
+        </接口>
+    </通知公告模块>
+    <政治生日模块>
+        <接口 name="送生日祝福" address="/birth/wish.do" wb="董云彬">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                    <param name="toUserId">被祝福人用户id</param>
+                    <param name="wishText">祝福内容</param>
+                    <param name="wishType">祝福类型：1书记寄语2生日感言3他人祝福</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码","msg":"状态信息"}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+            </返回值>
+        </接口>
+        <接口 name="祝福模板（找灵感）" address="/birth/wishTemp.do" wb="董云彬">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="partyId">党支部id</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"wishTemp":{祝福模板数据}}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data remark="响应数据">
+                    <wishTemp remark="会议列表">
+                        <attr name="tplId">模板id</attr>
+                        <attr name="partyId">党支部id</attr>
+                        <attr name="wishText">模板祝福语</attr>
+                        <attr name="createTime">创建时间，时间戳如1543245288000</attr>
+                    </wishTemp>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="近期政治生日 " address="/birth/recentBirth.do" wb="董云彬">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="partyId">党支部id</param>
+                </必填参数>
+                <选填参数>
+                    <param name="days">近多少天的政治生日，默认30</param>
+                    <param name="pageNum">分页页码,从1开始</param>
+                    <param name="pageSize">分页显示数</param>
+                </选填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"page":{分页数据},"objs":[{政治生日信息1},{政治生日信息2},...]}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data remark="响应数据">
+                    <objs remark="政治生日列表">
+                        <attr name="userId">用户编号</attr>
+                        <attr name="userName">用户姓名</attr>
+                        <attr name="avatar">用户头像</attr>
+                        <attr name="partyId">党支部id</attr>
+                        <attr name="fullTime">政治生日，时间戳如1543245288000</attr>
+                        <attr name="years">周年</attr>
+                    </objs>
+                    <page remark="分页数据">
+                        <attr name="pageNum">分页页码</attr>
+                        <attr name="pageSize">分页显示数</attr>
+                        <attr name="totalPage">总页数</attr>
+                        <attr name="totalNum">总数</attr>
+                    </page>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="获取生日祝福 " address="/birth/wishList.do" wb="董云彬">
+            <注意事项>返回数据按照wishType字段正序排序</注意事项>
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="toUserId">被祝福人id</param>
+                </必填参数>
+                <选填参数>
+                    <param name="wishType">祝福类型：1书记寄语2生日感言3他人祝福</param>
+                    <param name="wishYear">生日年份</param>
+                    <param name="pageNum">分页页码,从1开始</param>
+                    <param name="pageSize">分页显示数</param>
+                </选填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"page":{分页数据},"objs":[{生日祝福信息1},{生日祝福信息2},...]}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data remark="响应数据">
+                    <objs remark="生日祝福列表">
+                        <param name="wishId">祝福编号</param>
+                        <param name="fromUserId">祝福人用户id</param>
+                        <param name="fromUserName">祝福人用户姓名</param>
+                        <param name="fromUserAvatar">祝福人用户头像</param>
+                        <param name="toUserId">被祝福人用户id</param>
+                        <param name="wishText">祝福内容</param>
+                        <param name="wishYear">生日年份</param>
+                        <param name="wishType">祝福类型：1书记寄语2生日感言3他人祝福</param>
+                        <param name="wishTime">祝福时间，时间戳如1543245288000</param>
+                    </objs>
+                    <page remark="分页数据">
+                        <attr name="pageNum">分页页码</attr>
+                        <attr name="pageSize">分页显示数</attr>
+                        <attr name="totalPage">总页数</attr>
+                        <attr name="totalNum">总数</attr>
+                    </page>
+                </data>
+            </返回值>
+        </接口>
+    </政治生日模块>
+    <在线考试模块>
+        <接口 name="考试详情" address="/course/detail.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="euId">考试id</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"examine":{考试详情},"questions":[{问题信息1},{问题信息2},...]}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data remark="响应数据">
+                    <examine remark="考试详情">
+                        <attr name="euId">考试id</attr>
+                        <attr name="examId">试卷id</attr>
+                        <attr name="examName">考试名称</attr>
+                        <attr name="examDesc">考试说明</attr>
+                        <attr name="totalScore">总分</attr>
+                        <attr name="passScore">及格分</attr>
+                        <attr name="quNum">总题数(实际添加题目数更新)</attr>
+                        <attr name="timeLength">考试时长（分钟）</attr>
+                        <attr name="showType">显示答案时间 -1不显示 0立即 1.自定义时间</attr>
+                        <attr name="showTime">显示答案时间（showType 1 设置）</attr>
+                        <attr name="pushMsg">考试消息app推送 1是 0否</attr>
+                        <attr name="endMsg">考试结束提醒（固定提前多少分钟） 1是 0否</attr>
+                        <attr name="status">状态 -1未提交 0未通过 1待判分 2已通过</attr>
+                        <attr name="beginTime">考试开始时间，时间戳如1543245288000</attr>
+                        <attr name="endTime">考试结束时间，时间戳如1543245288000</attr>
+                        <attr name="releaseTime">发布时间，时间戳如1543245288000</attr>
+                        <attr name="createTime">创建时间，时间戳如1543245288000</attr>
+                    </examine>
+                    <questions remark="问题信息列表">
+                        <attr name="eqId">考试题目id</attr>
+                        <attr name="quNo">题目序号 1 2 3...</attr>
+                        <attr name="score">题目分数</attr>
+                        <attr name="title">题目标题</attr>
+                        <attr name="quType">题目类型 1单选题 2多选题 3填空题 4简答题</attr>
+                        <attr name="answers">题目答案（选择题选项===分隔 A|||答案1===B|||答案2===...）</attr>
+                        <attr name="maxNum">简答题回答最大字数限制</attr>
+                    </questions>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="考试列表" address="/examine/list.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                </必填参数>
+                <选填参数>
+                    <param name="status">状态 -1待考 0已考</param>
+                    <param name="pageNum">分页页码,从1开始</param>
+                    <param name="pageSize">分页显示数</param>
+                </选填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"page":{分页数据},"objs":[{考试信息1},{考试信息2},...]}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data remark="响应数据">
+                    <objs remark="考试列表">
+                        <attr name="euId">考试id</attr>
+                        <attr name="examId">试卷id</attr>
+                        <attr name="examName">考试名称</attr>
+                        <attr name="examDesc">考试说明</attr>
+                        <attr name="totalScore">总分</attr>
+                        <attr name="passScore">及格分</attr>
+                        <attr name="quNum">总题数(实际添加题目数更新)</attr>
+                        <attr name="timeLength">考试时长（分钟）</attr>
+                        <attr name="showType">显示答案时间 -1不显示 0立即 1.自定义时间</attr>
+                        <attr name="showTime">显示答案时间（showType 1 设置）</attr>
+                        <attr name="pushMsg">考试消息app推送 1是 0否</attr>
+                        <attr name="endMsg">考试结束提醒（固定提前多少分钟） 1是 0否</attr>
+                        <attr name="status">状态 -1未提交 0未通过 1待判分 2已通过</attr>
+                        <attr name="beginTime">考试开始时间，时间戳如1543245288000</attr>
+                        <attr name="endTime">考试结束时间，时间戳如1543245288000</attr>
+                        <attr name="releaseTime">发布时间，时间戳如1543245288000</attr>
+                        <attr name="createTime">创建时间，时间戳如1543245288000</attr>
+                    </objs>
+                    <page remark="分页数据">
+                        <attr name="pageNum">分页页码</attr>
+                        <attr name="pageSize">分页显示数</attr>
+                        <attr name="totalPage">总页数</attr>
+                        <attr name="totalNum">总数</attr>
+                    </page>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="考试答案" address="/examine/answer.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                    <param name="euId">考试id</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息",
+                    "data":{"score":{考试情况},"answers":[{答案信息1},{答案信息2},...]}}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+                <data remark="响应数据">
+                    <score remark="考试情况">
+                        <attr name="euId">考试id</attr>
+                        <attr name="examId">试卷id</attr>
+                        <attr name="userId">用户id</attr>
+                        <attr name="score">考试得分</attr>
+                        <attr name="passScore">及格分</attr>
+                        <attr name="useTimeLength">考试用时（秒）</attr>
+                        <attr name="status">状态 0未通过 1待判分 2已通过</attr>
+                    </score>
+                    <answers remark="答案信息列表">
+                        <attr name="eqId">考试题目id</attr>
+                        <attr name="quNo">题目序号 1 2 3...</attr>
+                        <attr name="score">题目分数</attr>
+                        <attr name="winScore">题目得分</attr>
+                        <attr name="answer">回答答案（多选题、多个空的填空题答案===分隔 A===B===...）</attr>
+                        <attr name="title">题目标题</attr>
+                        <attr name="quType">题目类型 1单选题 2多选题 3填空题 4简答题</attr>
+                        <attr name="answers">题目选项（选择题选项===分隔 A|||答案1===B|||答案2===...）</attr>
+                        <attr name="rightKey">正确答案（多选题、多个空的填空题答案===分隔 A|||答案1===B|||答案2===...）</attr>
+                        <attr name="analysis">答案解析</attr>
+                        <attr name="maxNum">简答题回答最大字数限制</attr>
+                        <attr name="status">答案状态 -1错误 0待评分 1正确</attr>
+                    </answers>
+                </data>
+            </返回值>
+        </接口>
+        <接口 name="答题" address="/examine/save.do" wb="张钧泳">
+            <接口描述>
+                访问例子：get提交===需urlencode，post可不用；
+                http://118.178.185.211:12306/dwmsapi/examine/save.do?answers[0].answer=B|||不不不%3D%3D%3DC|||戳戳戳&amp;answers[0].eqId=29&amp;dw_source=ios_1_0_0&amp;dw_timestamp=1545024003821&amp;dw_token=ios&amp;euId=34&amp;timeLength=24&amp;userId=50fccd1b4354451b9a8ac913ea09fee3
+            </接口描述>
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                    <param name="euId">考试id</param>
+                    <param name="timeLength">考试用时（秒）</param>
+                </必填参数>
+                <选填参数>
+                    <param name="answers[i].eqId">考试题目id</param>
+                    <param name="answers[i].answer">回答答案，如 B===C（多选题、多个空的填空题答案===分隔 A===B===...）</param>
+                </选填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码", "msg":"状态信息"}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+            </返回值>
+        </接口>
+    </在线考试模块>
+    <帮助中心模块>
+        <接口 name="帮助信息列表" address="/help/list.do" wb="董云彬">
+            <注意事项>帮助类型列表按照typeId字段正序排序，帮助信息列表按照typeId字段正序、infoId字段正序排序</注意事项>
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                </必填参数>
+                <返回值>
+                    <json>{"code":"状态码", "msg":"状态信息",
+                        "data":{"typeList":[{帮助类型信息1},{帮助类型信息2},...]}}
+                    </json>
+                    <code>
+                        <option value="0">成功</option>
+                    </code>
+                    <msg>状态信息</msg>
+                    <data remark="响应数据">
+                        <typeList remark="帮助类型">
+                            <attr name="typeId">类型编号</attr>
+                            <attr name="typeName">类型名称</attr>
+                            <attr name="infoList">帮助信息列表（[{帮助信息1},{帮助信息2},...]）</attr>
+                        </typeList>
+                        <infoList remark="帮助信息">
+                            <attr name="infoId">帮助信息编号</attr>
+                            <attr name="typeId">帮助类型编号</attr>
+                            <attr name="title">帮助信息标题</attr>
+                        </infoList>
+                    </data>
+                </返回值>
+            </参数>
+        </接口>
+        <接口 name="帮助信息详情" address="/help/detail.do" wb="董云彬">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="infoId">帮助信息编号</param>
+                </必填参数>
+                <返回值>
+                    <json>{"code":"状态码", "msg":"状态信息",
+                        "data":{"info":{帮助信息}}
+                    </json>
+                    <code>
+                        <option value="0">成功</option>
+                    </code>
+                    <msg>状态信息</msg>
+                    <data remark="响应数据">
+                        <info remark="帮助信息">
+                            <attr name="infoId">帮助信息编号</attr>
+                            <attr name="typeId">帮助类型编号</attr>
+                            <attr name="title">帮助信息标题</attr>
+                            <attr name="text">帮助信息内容</attr>
+                        </info>
+                    </data>
+                </返回值>
+            </参数>
+        </接口>
+    </帮助中心模块>
+    <党费模块>
+        <接口 name="党费详情" address="/due/detail.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                    <param name="dueId">党费id</param>
+                </必填参数>
+                <返回值>
+                    <json>{"code":"状态码", "msg":"状态信息",
+                        "data":{"due":{党费信息}，"due":{党费缴费信息}，"account":{党费账户信息}}}
+                    </json>
+                    <code>
+                        <option value="0">成功</option>
+                    </code>
+                    <msg>状态信息</msg>
+                    <data remark="响应数据">
+                        <due remark="党费信息列表">
+                            <attr name="dueId">党费ID</attr>
+                            <attr name="title">党费标题</attr>
+                            <attr name="dueDesc">党费描述</attr>
+                            <attr name="dueItem">党费项目 1党费 2特殊党费</attr>
+                            <attr name="dueType">党费类型 1固定金额 2自由金额</attr>
+                            <attr name="due">党费金额</attr>
+                            <attr name="endTime">截止日期，时间戳如1543245288000</attr>
+                        </due>
+                        <dueUser remark="党费缴费信息">
+                            <attr name="duId">缴费ID</attr>
+                            <attr name="dueId">党费ID</attr>
+                            <attr name="userId">用户ID</attr>
+                            <attr name="due">缴费金额</attr>
+                            <attr name="payWay">党费方式 1微信 2银行卡转账 3支付宝 4现金支付</attr>
+                            <attr name="status">缴费状态 0未缴费 1已缴费</attr>
+                            <attr name="imgPath">缴费凭证图片地址</attr>
+                            <attr name="dueTime">缴费时间，时间戳如1543245288000</attr>
+                        </dueUser>
+                        <account remark="党费账户信息">
+                            <attr name="accId">账户id</attr>
+                            <attr name="accName">党费账户名称</attr>
+                            <attr name="wechatFilePath">微信支付图片</attr>
+                            <attr name="alipayFilePath">支付宝支付图片</attr>
+                            <attr name="payeeName">收款方姓名</attr>
+                            <attr name="payeeBank">收款方开户银行</attr>
+                            <attr name="payeeAddress">收款方开户地址</attr>
+                            <attr name="payeeAccount">收款方账号</attr>
+                            <attr name="remark">备注信息</attr>
+                            <attr name="tips">注意事项</attr>
+                        </account>
+
+                    </data>
+                </返回值>
+            </参数>
+        </接口>
+        <接口 name="党费列表" address="/due/list.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                    <param name="status">党费状态 0未缴费 1已缴费</param>
+                </必填参数>
+                <选填参数>
+                    <param name="pageNum">分页页码,从1开始</param>
+                    <param name="pageSize">分页显示数</param>
+                </选填参数>
+                <返回值>
+                    <json>{"code":"状态码", "msg":"状态信息",
+                        "data":{"page":{分页数据},"objs":[{党费信息1},{党费信息2},...]}}
+                    </json>
+                    <code>
+                        <option value="0">成功</option>
+                    </code>
+                    <msg>状态信息</msg>
+                    <data remark="响应数据">
+                        <objs remark="党费信息列表">
+                            <attr name="dueId">党费ID</attr>
+                            <attr name="title">党费标题</attr>
+                            <attr name="dueDesc">党费描述</attr>
+                            <attr name="dueItem">党费项目 1党费 2特殊党费</attr>
+                            <attr name="dueType">党费类型 1固定金额 2自由金额</attr>
+                            <attr name="due">党费金额</attr>
+                            <attr name="endTime">截止日期，时间戳如1543245288000</attr>
+                            <attr name="status">党费状态 0未缴费 1已缴费</attr>
+                        </objs>
+                        <page remark="分页数据">
+                            <attr name="pageNum">分页页码</attr>
+                            <attr name="pageSize">分页显示数</attr>
+                            <attr name="totalPage">总页数</attr>
+                            <attr name="totalNum">总数</attr>
+                        </page>
+                    </data>
+                </返回值>
+            </参数>
+        </接口>
+        <接口 name="确认缴费" address="/due/confirm.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                    <param name="dueId">党费id</param>
+                    <param name="due">党费金额，目前只需传整，如1元传1</param>
+                    <param name="payWay">党费方式 1微信 2银行卡转账 3支付宝 4现金支付</param>
+                </必填参数>
+                <选填参数>
+                    <param name="imgPath" type="FILE">上传缴费凭证图片</param>
+                </选填参数>
+                <返回值>
+                    <json>{"code":"状态码", "msg":"状态信息"}
+                    </json>
+                    <code>
+                        <option value="0">成功</option>
+                    </code>
+                    <msg>状态信息</msg>
+                </返回值>
+            </参数>
+        </接口>
+    </党费模块>
+    <相册模块>
+        <接口 name="相册列表" address="/album/list.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="partyId">党支部id</param>
+                </必填参数>
+                <选填参数>
+                    <param name="pageNum">分页页码,从1开始</param>
+                    <param name="pageSize">分页显示数</param>
+                </选填参数>
+                <返回值>
+                    <json>{"code":"状态码", "msg":"状态信息",
+                        "data":{"page":{分页数据},"objs":[{相册信息1},{相册信息2},...]}}
+                    </json>
+                    <code>
+                        <option value="0">成功</option>
+                    </code>
+                    <msg>状态信息</msg>
+                    <data remark="响应数据">
+                        <objs remark="相册列表">
+                            <attr name="albumId">相册id</attr>
+                            <attr name="albumName">相册名称</attr>
+                            <attr name="albumDesc">相册描述</attr>
+                            <attr name="cover">封面图片地址</attr>
+                            <attr name="releaseTime">发布时间，时间戳如1543245288000</attr>
+                        </objs>
+                        <page remark="分页数据">
+                            <attr name="pageNum">分页页码</attr>
+                            <attr name="pageSize">分页显示数</attr>
+                            <attr name="totalPage">总页数</attr>
+                            <attr name="totalNum">总数</attr>
+                        </page>
+                    </data>
+                </返回值>
+            </参数>
+        </接口>
+        <接口 name="相册图片列表" address="/album/imgList.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="albumId">相册id</param>
+                </必填参数>
+                <选填参数>
+                    <param name="pageNum">分页页码,从1开始</param>
+                    <param name="pageSize">分页显示数</param>
+                </选填参数>
+                <返回值>
+                    <json>{"code":"状态码", "msg":"状态信息",
+                        "data":{"page":{分页数据},"objs":[{相册图片信息1},{相册图片信息2},...]}}
+                    </json>
+                    <code>
+                        <option value="0">成功</option>
+                    </code>
+                    <msg>状态信息</msg>
+                    <data remark="响应数据">
+                        <objs remark="相册图片列表">
+                            <attr name="aiNo">图片序号 0 1 2 3...</attr>
+                            <attr name="imgPath">相册图片地址</attr>
+                        </objs>
+                        <page remark="分页数据">
+                            <attr name="pageNum">分页页码</attr>
+                            <attr name="pageSize">分页显示数</attr>
+                            <attr name="totalPage">总页数</attr>
+                            <attr name="totalNum">总数</attr>
+                        </page>
+                    </data>
+                </返回值>
+            </参数>
+        </接口>
+    </相册模块>
+    <反馈建议模块>
+        <接口 name="添加反馈" address="/advice/add.do" wb="董云彬">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                    <param name="adviceText">祝福内容</param>
+                </必填参数>
+            </参数>
+            <返回值>
+                <json>{"code":"状态码","msg":"状态信息"}
+                </json>
+                <code>
+                    <option value="0">成功</option>
+                </code>
+                <msg>状态信息</msg>
+            </返回值>
+        </接口>
+    </反馈建议模块>
+    <待办事务模块>
+        <接口 name="待办事务(用于首页)" address="/msg/matter/recent.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                </必填参数>
+                <返回值>
+                    <json>{"code":"状态码", "msg":"状态信息",
+                        "data":{"nums":"待办事务数量","matters":[{待办事务1},{待办事务2}]}}
+                    </json>
+                    <code>
+                        <option value="0">成功</option>
+                    </code>
+                    <msg>状态信息</msg>
+                    <data remark="响应数据">
+                        <attr name="nums">待办事务数量</attr>
+                        <matters remark="待办事务列表">
+                            <attr name="type">事务分类，1三会一课 2党费收缴 3在线考试 4微党课</attr>
+                            <attr name="typeId">事务id,各个类型对应的id</attr>
+                            <attr name="title">事务标题</attr>
+                            <attr name="status">状态，取决于type，type=1(-9已请假 -1未确认 0未签到 1已签到），type=2(0未缴费 1已缴费），type=3(-1待考试
+                                0未通过 1待判分 2已通过），type=4(0学习中 1已完成）
+                            </attr>
+                            <attr name="beginTime">开始时间，时间戳如1543245288000</attr>
+                        </matters>
+                    </data>
+                </返回值>
+            </参数>
+        </接口>
+        <接口 name="最近事务列表" address="/msg/matter/list.do" wb="张钧泳">
+            <参数>
+                <必填参数>
+                    <param name="dw_token">接口token</param>
+                    <param name="dw_source">来源</param>
+                    <param name="dw_timestamp">访问时间戳</param>
+                    <param name="dw_signature">访问签名</param>
+                    <param name="userId">用户id</param>
+                </必填参数>
+                <返回值>
+                    <json>{"code":"状态码", "msg":"状态信息",
+                        "data":{"objs":[{待办事务1},{待办事务2},...]}}
+                    </json>
+                    <code>
+                        <option value="0">成功</option>
+                    </code>
+                    <msg>状态信息</msg>
+                    <data remark="响应数据">
+                        <objs remark="最近事务列表">
+                            <attr name="type">事务分类，1三会一课 2党费收缴 3在线考试 4微党课</attr>
+                            <attr name="typeId">事务id,各个类型对应的id</attr>
+                            <attr name="title">事务标题</attr>
+                            <attr name="status">状态，取决于type，type=1(-9已请假 -1未确认 0未签到 1已签到），type=2(0未缴费 1已缴费），type=3(-1待考试
+                                0未通过 1待判分 2已通过），type=4(0学习中 1已完成）
+                            </attr>
+                            <attr name="beginTime">开始时间，时间戳如1543245288000</attr>
+                        </objs>
+                    </data>
+                </返回值>
+            </参数>
+        </接口>
+    </待办事务模块>
+</党务秘书API接口>

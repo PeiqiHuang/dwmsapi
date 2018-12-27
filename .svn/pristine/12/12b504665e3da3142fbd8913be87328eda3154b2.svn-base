@@ -1,0 +1,461 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "  1、将yh_token,yh_source,yh_timestamp,yh_timestamp和其他非空值参数进行字典序排序\n            2、将排序后的参数使用URL键值对的格式（即key1=value1&amp;key2=value2…）拼接成字符串s\n            3、将密钥拼接在字符串s后面\n            4、对拼接字符串进行MD5加密，即yh_signature=MD5(s)\n            5、开发阶段不传dw_signature将不触发此校验, 带上dw_signature才会出发校验",
+    "version": "1.0",
+    "title": "党务秘书API接口文档",
+    "contact": {
+      "name": "windy",
+      "url": "http://www.baidu.com",
+      "email": "530650681@qq.com"
+    }
+  },
+  "host": "localhost:8080",
+  "basePath": "/dwmsapi",
+  "tags": [
+    {
+      "name": "公共模块",
+      "description": "Common Controller"
+    }
+  ],
+  "produces": [
+    "application/json; charset=UTF-8"
+  ],
+  "paths": {
+    "/common/advert.do": {
+      "get": {
+        "tags": [
+          "公共模块"
+        ],
+        "summary": "广告列表",
+        "description": "\n{\n\t\"data\":{\n\t\t\"objs\":[\n\t\t\t{\n\t\t\t\t\"cover\":\"图片\",\n\t\t\t\t\"adId\":\"广告id\",\n\t\t\t\t\"name\":\"广告名称\",\n\t\t\t\t\"action\":\"动作\",\n\t\t\t\t\"adKey\":\"广告位置key\",\n\t\t\t\t\"beginTime\":\"开始时间，格式YYYY-MM-DD HH-MM-SS，如2017-05-30 10:00:00\",\n\t\t\t\t\"endTime\":\"结束时间\"\n\t\t\t}\n\t\t]\n\t}\n}",
+        "operationId": "advertUsingGET_23",
+        "parameters": [
+          {
+            "name": "adKey",
+            "in": "query",
+            "description": "广告位置key",
+            "required": false,
+            "type": "string",
+            "default": "app_banner"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ResultBean"
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/common/smsCode.do": {
+      "get": {
+        "tags": [
+          "公共模块"
+        ],
+        "summary": "smsCode",
+        "operationId": "smsCodeUsingGET_2",
+        "parameters": [
+          {
+            "name": "mobile",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ResultBean"
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "head": {
+        "tags": [
+          "公共模块"
+        ],
+        "summary": "smsCode",
+        "operationId": "smsCodeUsingHEAD_2",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "mobile",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ResultBean"
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "post": {
+        "tags": [
+          "公共模块"
+        ],
+        "summary": "smsCode",
+        "operationId": "smsCodeUsingPOST_2",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "mobile",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ResultBean"
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "put": {
+        "tags": [
+          "公共模块"
+        ],
+        "summary": "smsCode",
+        "operationId": "smsCodeUsingPUT_2",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "mobile",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ResultBean"
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "delete": {
+        "tags": [
+          "公共模块"
+        ],
+        "summary": "smsCode",
+        "operationId": "smsCodeUsingDELETE_2",
+        "parameters": [
+          {
+            "name": "mobile",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ResultBean"
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "options": {
+        "tags": [
+          "公共模块"
+        ],
+        "summary": "smsCode",
+        "operationId": "smsCodeUsingOPTIONS_2",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "mobile",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ResultBean"
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "patch": {
+        "tags": [
+          "公共模块"
+        ],
+        "summary": "smsCode",
+        "operationId": "smsCodeUsingPATCH_2",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "mobile",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ResultBean"
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/common/version.do": {
+      "get": {
+        "tags": [
+          "公共模块"
+        ],
+        "summary": "version",
+        "operationId": "versionUsingGET_2",
+        "parameters": [
+          {
+            "name": "appCode",
+            "in": "query",
+            "description": "app标识",
+            "required": false,
+            "type": "string",
+            "x-example": "ios"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ResultBean"
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "head": {
+        "tags": [
+          "公共模块"
+        ],
+        "summary": "version",
+        "operationId": "versionUsingHEAD_2",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "appCode",
+            "in": "query",
+            "description": "app标识",
+            "required": false,
+            "type": "string",
+            "x-example": "ios"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ResultBean"
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "post": {
+        "tags": [
+          "公共模块"
+        ],
+        "summary": "version",
+        "operationId": "versionUsingPOST_2",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "appCode",
+            "in": "query",
+            "description": "app标识",
+            "required": false,
+            "type": "string",
+            "x-example": "ios"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ResultBean"
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "put": {
+        "tags": [
+          "公共模块"
+        ],
+        "summary": "version",
+        "operationId": "versionUsingPUT_2",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "appCode",
+            "in": "query",
+            "description": "app标识",
+            "required": false,
+            "type": "string",
+            "x-example": "ios"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ResultBean"
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "delete": {
+        "tags": [
+          "公共模块"
+        ],
+        "summary": "version",
+        "operationId": "versionUsingDELETE_2",
+        "parameters": [
+          {
+            "name": "appCode",
+            "in": "query",
+            "description": "app标识",
+            "required": false,
+            "type": "string",
+            "x-example": "ios"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ResultBean"
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "options": {
+        "tags": [
+          "公共模块"
+        ],
+        "summary": "version",
+        "operationId": "versionUsingOPTIONS_2",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "appCode",
+            "in": "query",
+            "description": "app标识",
+            "required": false,
+            "type": "string",
+            "x-example": "ios"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ResultBean"
+            }
+          }
+        },
+        "deprecated": false
+      },
+      "patch": {
+        "tags": [
+          "公共模块"
+        ],
+        "summary": "version",
+        "operationId": "versionUsingPATCH_2",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "appCode",
+            "in": "query",
+            "description": "app标识",
+            "required": false,
+            "type": "string",
+            "x-example": "ios"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ResultBean"
+            }
+          }
+        },
+        "deprecated": false
+      }
+    }
+  },
+  "definitions": {
+    "ResultBean": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "example": 0,
+          "description": "状态码 0成功"
+        },
+        "data": {
+          "type": "object",
+          "description": "响应数据"
+        },
+        "msg": {
+          "type": "string",
+          "example": "成功",
+          "description": "状态信息"
+        }
+      },
+      "title": "ResultBean"
+    }
+  }
+}
